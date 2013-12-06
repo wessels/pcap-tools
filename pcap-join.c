@@ -107,7 +107,6 @@ main(int argc, char *argv[])
     }
     argc -= optind;
     argv += optind;
-fprintf(stderr, "argc=%d\n", argc);
 
     if (0 == argc) {
 	char buf[512];
