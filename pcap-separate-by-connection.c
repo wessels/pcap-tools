@@ -128,11 +128,17 @@ inx_addr_equal(inx_addr a, inx_addr b)
 int
 tuple_equal(tuple *a, tuple *b)
 {
-    return
-	(a->sport == b->sport) &&
+    if ((a->sport == b->sport) &&
 	(a->dport == b->dport) &&
 	inx_addr_equal(a->sip, b->sip) &&
-	inx_addr_equal(a->dip, b->dip);
+	inx_addr_equal(a->dip, b->dip))
+	return 1;
+    if ((a->sport == b->dport) &&
+	(a->dport == b->sport) &&
+	inx_addr_equal(a->sip, b->dip) &&
+	inx_addr_equal(a->dip, b->sip))
+	return 1;
+    return 0;
 }
 
 void

@@ -13,23 +13,12 @@
 #include <netinet/ip6.h>
 #include <arpa/inet.h>
 
-#include "pcap_layers.h"
+#include <pcap_layers.h>
+#include "pcap-tools.h"
 
 const char *progname;
 struct pcap_pkthdr out_hdr;
 const u_char *out_data;
-
-/* Copy the host order 32 bit integer in x into the memory pointed to by p
- * in network order.  p does not have to be aligned. */
-#ifndef htonpl
-#define htonpl(p, x) \
-    do { \
-        ((uint8_t*)(p))[0] = (x & 0xFF000000) >> 24; \
-        ((uint8_t*)(p))[1] = (x & 0x00FF0000) >> 16; \
-        ((uint8_t*)(p))[2] = (x & 0x0000FF00) >> 8; \
-        ((uint8_t*)(p))[3] = (x & 0x000000FF) >> 0; \
-    } while (0)
-#endif
 
 
 /*

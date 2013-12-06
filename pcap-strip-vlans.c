@@ -19,14 +19,9 @@
 #define ETHERTYPE_8021Q 0x8100
 #endif
 
-char *progname = NULL;
+#include "pcap-tools.h"
 
-/* Convert the network order 16 bit integer pointed to by p to host order.
- * p does not have to be aligned. */
-#ifndef nptohs
-#define nptohs(p) \
-   ((((uint8_t*)(p))[0] << 8) | ((uint8_t*)(p))[1])
-#endif
+char *progname = NULL;
 
 
 int

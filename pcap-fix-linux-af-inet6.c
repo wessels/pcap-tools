@@ -9,18 +9,9 @@
 #include <getopt.h>
 #include <arpa/inet.h>
 
+#include "pcap-tools.h"
+
 char *progname = NULL;
-
-/* Convert the network order 32 bit integer pointed to by p to host order.
- * p does not have to be aligned. */
-#ifndef nptohl
-#define nptohl(p) \
-   ((((uint8_t*)(p))[0] << 24) | \
-    (((uint8_t*)(p))[1] << 16) | \
-    (((uint8_t*)(p))[2] << 8) | \
-    ((uint8_t*)(p))[3])
-#endif
-
 
 int
 needs_fixing(const struct pcap_pkthdr *hdr, const u_char *data)
