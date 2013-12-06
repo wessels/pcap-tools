@@ -21,7 +21,7 @@
 #include <pcap.h>
 #include "pcap_layers.h"
 
-#define LIMIT_OPEN_FD 8192
+#define LIMIT_OPEN_FD 1024
 #define LIMIT_MAXRSS (256<<20)
 #define LIMIT_PKTS_IN_MEM (2<<20)
 #define QUAD_A(ip) ((ntohl(ip.u.in4.s_addr) >> 24) & 0xFF)
@@ -86,7 +86,6 @@ struct _conn
     packet *pkthead;
     packet **pkttail;
     int npackets;
-    struct timeval last;
     pcap_dumper_t *fd;
     conn *next;
     dlink_node lru;
