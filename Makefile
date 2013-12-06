@@ -15,6 +15,7 @@ pcap-strip-vlans \
 pcap-print-sip \
 pcap-print-sip-protocol \
 pcap-separate-by-sip \
+pcap-separate-by-connection \
 pcap-sort-by-sip \
 pcap-separate \
 pcap-to-dlt-loop \
@@ -81,6 +82,9 @@ pcap-print-sip-protocol: pcap-print-sip-protocol.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-separate-by-sip: pcap-separate-by-sip.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-separate-by-connection: pcap-separate-by-connection.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-sort-by-sip: pcap-sort-by-sip.o
