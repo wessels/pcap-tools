@@ -19,7 +19,8 @@
 #include <inttypes.h>
 
 #include <pcap.h>
-#include "pcap_layers.h"
+#include <pcap_layers.h>
+#include "pcap-tools.h"
 
 #define LIMIT_OPEN_FD 1024
 #define LIMIT_MAXRSS (256<<20)
@@ -100,6 +101,9 @@ static unsigned int nconn = 0;
 static unsigned int npacketsmem = 0;
 static pcap_t *in = NULL;
 static int use_subdirs = 1;	/* write files into subdirs */
+static uint64_t pkts_read = 0;
+static uint64_t pkts_writ = 0;
+static uint64_t pkts_stashed = 0;
 
 unsigned int
 inx_addr_hash(inx_addr a)
@@ -261,8 +265,10 @@ conn_pcap_write(conn *f)
     packet *p;
     if (0 == f->npackets)
 	return;
-    for (p = f->pkthead; p; p = p->next)
+    for (p = f->pkthead; p; p = p->next) {
 	pcap_dump((void *) f->fd, &p->hdr, p->data);
+	pkts_writ++;
+    }
     conn_free_packets(f);
 }
 
@@ -300,7 +306,7 @@ close_lru(void)
 	    continue;
 	conn_pcap_write(f);
 	conn_pcap_close(f);
-	/* conn_free(f); */
+	conn_free(f);
 	nc++;
     }
     fprintf(stderr, "%d\n", nc);
@@ -331,7 +337,7 @@ flushall()
     conn *f;
     conn *next;
     fprintf(stderr, "Flushing...\n");
-    for (i = 0; i < 256; i++) {
+    for (i = 0; i < HASH_SIZE; i++) {
 	for (f = Hash[i]; f; f = next) {
 	    next = f->next;
 	    if (0 == f->npackets)
@@ -396,20 +402,20 @@ stash(tuple *t, struct pcap_pkthdr *hdr, const unsigned char *data)
 }
 
 void
-print_stats(struct timeval ts, uint64_t pkt_count)
+print_stats(struct timeval ts)
 {
     struct timeval now;
     gettimeofday(&now, NULL);
-    fprintf(stderr, "%ld.%03ld: at %ld, %12" PRIu64 " pkts, %9d conns, %4d files\n",
-	(long) now.tv_sec, (long) now.tv_usec / 1000, (long) ts.tv_sec, pkt_count, nconn, nopen);
+    fprintf(stderr, "%ld.%03ld: at %ld, %12" PRIu64 " read, %12" PRIu64 " stashed, %12" PRIu64 " writ, %9d conns, %4d files\n",
+	(long) now.tv_sec, (long) now.tv_usec / 1000, (long) ts.tv_sec, pkts_read, pkts_stashed, pkts_writ, nconn, nopen);
 }
 
 int
 my_tcp_handler(const struct tcphdr *tcp, int len, void *userdata)
 {
     tuple *t = userdata;
-    t->sport = tcp->th_sport;
-    t->dport = tcp->th_dport;
+    t->sport = nptohs(&tcp->th_sport);
+    t->dport = nptohs(&tcp->th_dport);
     return 0;
 }
 
@@ -438,7 +444,6 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 int
 main(int argc, char *argv[])
 {
-    uint64_t pkt_count = 0;
     char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr hdr;
     const u_char *data;
@@ -495,22 +500,24 @@ main(int argc, char *argv[])
     callback_ipv6 = my_ip6_handler;
 
     while ((data = pcap_next(in, &hdr))) {
-	tuple tuple;
-	memset(&tuple, 0, sizeof(tuple));
-	handle_pcap((u_char *) & tuple, &hdr, data);
-	if (tuple.sip.family == 0)
+	tuple T;
+	memset(&T, 0, sizeof(T));
+	pkts_read++;
+	handle_pcap((u_char *) & T, &hdr, data);
+	if (T.sip.family == 0)
 	    continue;
-	if (0 == tuple.sport && 0 == tuple.dport)
+	if (0 == T.sport && 0 == T.dport)
 	    continue;
-	stash(&tuple, &hdr, data);
-	if (0 == (++pkt_count & 0x3FFF)) {
-	    print_stats(hdr.ts, pkt_count);
+	stash(&T, &hdr, data);
+	if (0 == (++pkts_stashed & 0x3FFF)) {
+	    print_stats(hdr.ts);
 	    if (npacketsmem > LIMIT_PKTS_IN_MEM) {
 		flushall();
 	    }
 	}
     }
     flushall();
+    print_stats(hdr.ts);
     fprintf(stderr, "Max RSS  %ld KB \n", getmaxrss());
     return 0;
 }
