@@ -16,6 +16,7 @@
 pcap_dumper_t *out = NULL;
 unsigned int fifocount = 0;
 const char *filterstr = 0;
+const char *progname = 0;
 int verbose = 0;
 
 void
@@ -95,6 +96,10 @@ int
 main(int argc, char *argv[])
 {
     int i;
+    if (strrchr(argv[0], '/'))
+	progname = strdup(1+strrchr(argv[0], '/'));
+    else
+	progname = strdup(argv[0]);
     while ((i = getopt(argc, argv, "b:hv")) != -1) {
         switch (i) {
             case 'b':
@@ -118,7 +123,7 @@ main(int argc, char *argv[])
 	while (NULL != fgets(buf, 512, stdin)) {
 		strtok(buf, "\r\n");
 		if (verbose > 0)
-			fprintf(stderr, "Joining %s\n", buf);
+			fprintf(stderr, "%s: %s\n", progname, buf);
 		join(buf);
 	}
     } else for (i = 0; i < argc; i++) {
