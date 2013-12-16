@@ -16,6 +16,7 @@
 pcap_dumper_t *out = NULL;
 unsigned int fifocount = 0;
 const char *filterstr = 0;
+int verbose = 0;
 
 void
 join(const char *pcapfile)
@@ -94,7 +95,7 @@ int
 main(int argc, char *argv[])
 {
     int i;
-    while ((i = getopt(argc, argv, "b:h")) != -1) {
+    while ((i = getopt(argc, argv, "b:hv")) != -1) {
         switch (i) {
             case 'b':
                 filterstr = strdup(optarg);
@@ -103,6 +104,9 @@ main(int argc, char *argv[])
             case 'h':
                 default:
                 usage();
+            case 'v':
+                verbose++;
+		break;
         }
     }
     argc -= optind;
@@ -113,6 +117,8 @@ main(int argc, char *argv[])
 	/* read file names from stdin */
 	while (NULL != fgets(buf, 512, stdin)) {
 		strtok(buf, "\r\n");
+		if (verbose > 0)
+			fprintf(stderr, "Joining %s\n", buf);
 		join(buf);
 	}
     } else for (i = 0; i < argc; i++) {
@@ -155,6 +161,8 @@ main(int argc, char *argv[])
 		closedir(d);
 		qsort(paths, filecnt, sizeof(char *), qsort_strcmp);
 		for (k = 0; k < filecnt; k++) {
+			if (verbose > 0)
+				fprintf(stderr, "Joining %s\n", *(paths+k));
 			join(*(paths+k));
 			free(*(paths+k));
 		}
