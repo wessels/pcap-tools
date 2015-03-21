@@ -17,6 +17,7 @@ pcap-print-sip-protocol \
 pcap-separate-by-sip \
 pcap-separate-by-connection \
 pcap-sort-by-sip \
+pcap-merge-sorted-sip \
 pcap-separate \
 pcap-to-dlt-loop \
 pcap-to-dlt-raw \
@@ -102,6 +103,8 @@ pcap-to-dlt-raw: pcap-to-dlt-raw.o
 pcap-to-dlt-en10mb: pcap-to-dlt-en10mb.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
+pcap-merge-sorted-sip: pcap-merge-sorted-sip.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 
 clean:
