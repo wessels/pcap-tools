@@ -265,8 +265,8 @@ pcap_sort_by_af_spawn(const char *inf, const char *outf)
 
     out = my_pcap_dump_open(in, outf);
     pcap_close(in);
-    v6sorted = pcap_copy_fd_to_dump(v6rfd, out);
     v4sorted = pcap_copy_fd_to_dump(v4rfd, out);
+    v6sorted = pcap_copy_fd_to_dump(v6rfd, out);
     gettimeofday(&stop, NULL);
     timersub(&stop, &start, &duration);
     fprintf(stderr, "\nSorted %"PRIu64" IPv4 and %"PRIu64" IPv6 packets in %d.%d seconds\n",
