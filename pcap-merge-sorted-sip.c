@@ -105,7 +105,7 @@ read_next_packet(struct _in *in)
 {
 	const u_char *data;
     	data = pcap_next(in->pcap, &in->hdr);
-	if (0 == in->data) {
+	if (0 == data) {
 		pcap_close(in->pcap);
 		in->pcap = 0;
 		n_inputs--;
