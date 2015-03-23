@@ -68,7 +68,7 @@ pcap-find-misordered: pcap-find-misordered.o
 	${CC} -o $@ ${@}.o ${LIBPCAP}
 
 pcap-reorder: pcap-reorder.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-fix-linux-af-inet6: pcap-fix-linux-af-inet6.o
 	${CC} -o $@ ${@}.o ${LIBPCAP}

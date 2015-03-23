@@ -108,7 +108,6 @@ read_next_packet(struct _in *in)
 	if (0 == data) {
 		pcap_close(in->pcap);
 		in->pcap = 0;
-		n_inputs--;
 		return;
 	}
 	memcpy(&in->data[0], data, in->hdr.caplen);
@@ -158,7 +157,7 @@ pcap_merge_sorted_sip(int argc, char *argv[], const char *outf)
 
     gettimeofday(&start, NULL);
     for (i = 0 ; i < argc; i++) {
-	struct _in *in = &inputs[i];
+	struct _in *in = &inputs[n_inputs++];
 	memset(in, 0, sizeof(*in));
 	in->pcap = my_pcap_open_offline(argv[i]);
 	if (0 == i) {
@@ -168,13 +167,12 @@ pcap_merge_sorted_sip(int argc, char *argv[], const char *outf)
 	} else if (pcap_datalink(inputs[0].pcap) != pcap_datalink(in->pcap)) {
 		errx(1, "All pcap input files must have same datalink type");
 	}
-	n_inputs++;
 	read_next_packet(in);
     }
 
     out = my_pcap_dump_open(inputs[0].pcap, outf);
 
-    while (n_inputs) {
+    for (;;) {
 	struct _in *best = 0;
 	for (i = 0; i < n_inputs; i++) {
 		struct _in *in = &inputs[i];
@@ -182,7 +180,8 @@ pcap_merge_sorted_sip(int argc, char *argv[], const char *outf)
 			continue;
 		best = compare(best, in);
 	}
-	assert(best);
+	if (0 == best)
+		break;
 	pcap_dump((u_char *) out, &best->hdr, best->data);
 	read_next_packet(best);
     }
