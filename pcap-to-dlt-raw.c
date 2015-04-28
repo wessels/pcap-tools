@@ -76,9 +76,15 @@ main(int argc, char *argv[])
 	    out_hdr.ts = in_hdr.ts;
 	    out_hdr.caplen = 0;
 	    out_data = NULL;
+	    if (in_hdr.caplen > in_hdr.len)
+		in_hdr.caplen = in_hdr.len;
 	    handle_pcap(NULL, &in_hdr, data);
 	    if (out_data && out_hdr.caplen) {
 	        out_hdr.len = in_hdr.len + out_hdr.caplen - in_hdr.caplen;
+#if DEBUG
+	    fprintf(stderr, "in len %d  in caplen %d  out len %d  out caplen %d\n",
+		in_hdr.len, in_hdr.caplen, out_hdr.len, out_hdr.caplen);
+#endif
 		pcap_dump((void *)out, &out_hdr, out_data);
 	    }
     }
