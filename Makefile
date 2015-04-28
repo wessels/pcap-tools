@@ -7,6 +7,7 @@ pcap-remove-dupe \
 pcap-remove-bogus \
 pcap-split \
 pcap-change-dst \
+pcap-change-ip \
 pcap-decapsulate-gre \
 pcap-find-misordered \
 pcap-reorder \
@@ -59,6 +60,9 @@ pcap-split: pcap-split.o
 	${CC} -o $@ ${@}.o ${LIBPCAP}
 
 pcap-change-dst: pcap-change-dst.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-change-ip: pcap-change-ip.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-decapsulate-gre: pcap-decapsulate-gre.o
