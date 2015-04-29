@@ -14,6 +14,7 @@ pcap-reorder \
 pcap-fix-linux-af-inet6 \
 pcap-strip-vlans \
 pcap-print-sip \
+pcap-print-tcp-options \
 pcap-print-sip-protocol \
 pcap-separate-by-sip \
 pcap-separate-by-connection \
@@ -81,6 +82,9 @@ pcap-strip-vlans: pcap-strip-vlans.o
 	${CC} -o $@ ${@}.o ${LIBPCAP}
 
 pcap-print-sip: pcap-print-sip.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-print-tcp-options: pcap-print-tcp-options.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-print-sip-protocol: pcap-print-sip-protocol.o
