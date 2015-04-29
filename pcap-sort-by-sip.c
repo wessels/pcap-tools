@@ -87,7 +87,7 @@ my_pcap_dump_open(pcap_t * other, const char *f)
     pcap_dumper_t *out;
     out = pcap_dump_open(other, f);
     if (NULL == out)
-	errx(1, f);
+	errx(1, "%s", f);
     return out;
 }
 
@@ -108,7 +108,7 @@ pcap_sort(const char *inf, const char *outf, int level)
     snprintf(tmpdirs[level], TMPDIRNAMESZ, "sort.%d.XXXXXXXXXXX", level);
     dir = mkdtemp(tmpdirs[level]);
     if (NULL == dir)
-	errx(1, tmpdirs[level]);
+	errx(1, "%s", tmpdirs[level]);
     theLevel = level;
     /*fprintf(stderr, "Sorting '%s' at level %d\n", inf, theLevel);*/
     fprintf(stderr, "\r%c", twhiler[tc++ & 3]);
@@ -211,7 +211,7 @@ pcap_copy_fd_to_dump(int fd, pcap_dumper_t *out)
 	errx(1, "fdopen");
     in = pcap_fopen_offline(fp, errbuf);
     if (NULL == in)
-	errx(1, errbuf);
+	errx(1, "%s", errbuf);
     while ((data = pcap_next(in, &hdr))) {
 	pcap_dump((u_char *) out, &hdr, data);
 	count++;
