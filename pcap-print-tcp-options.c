@@ -54,13 +54,31 @@ my_tcp_handler(const struct tcphdr *tcp, int len, void *userdata)
 	inet_ntop(s->dst.family, &s->dst.u, dbuf, sizeof(dbuf));
 	printf("%-30s %-30s %c%c%c%c%c%c",
 		sbuf, dbuf,
+#ifdef TH_FIN
+		/* BSD */
+		tcp->th_flags & TH_URG ? 'U' : '.',
+		tcp->th_flags & TH_ACK ? 'A' : '.',
+		tcp->th_flags & TH_PUSH ? 'P' : '.',
+		tcp->th_flags & TH_RST ? 'R' : '.',
+		tcp->th_flags & TH_SYN ? 'S' : '.',
+		tcp->th_flags & TH_FIN ? 'F' : '.'
+#else
+		/* Linux */
 		tcp->urg ? 'U' : '.',
 		tcp->ack ? 'A' : '.',
 		tcp->psh ? 'P' : '.',
 		tcp->rst ? 'R' : '.',
 		tcp->syn ? 'S' : '.',
-		tcp->fin ? 'F' : '.');
+		tcp->fin ? 'F' : '.'
+#endif
+);
+#ifdef TH_FIN
+	/* BSD */
+	doff = tcp->th_off << 2;
+#else
+	/* Linux */
 	doff = tcp->doff << 2;
+#endif
 	if (doff > sizeof(*tcp)) {
 		unsigned int hdrlen = doff - sizeof(*tcp);
 		uint8_t *x = (uint8_t *) (tcp + 1);
