@@ -7,12 +7,14 @@ pcap-remove-dupe \
 pcap-remove-bogus \
 pcap-split \
 pcap-change-dst \
+pcap-change-ip \
 pcap-decapsulate-gre \
 pcap-find-misordered \
 pcap-reorder \
 pcap-fix-linux-af-inet6 \
 pcap-strip-vlans \
 pcap-print-sip \
+pcap-print-tcp-options \
 pcap-print-sip-protocol \
 pcap-separate-by-sip \
 pcap-separate-by-connection \
@@ -61,6 +63,9 @@ pcap-split: pcap-split.o
 pcap-change-dst: pcap-change-dst.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
+pcap-change-ip: pcap-change-ip.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
 pcap-decapsulate-gre: pcap-decapsulate-gre.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
@@ -77,6 +82,9 @@ pcap-strip-vlans: pcap-strip-vlans.o
 	${CC} -o $@ ${@}.o ${LIBPCAP}
 
 pcap-print-sip: pcap-print-sip.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-print-tcp-options: pcap-print-tcp-options.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-print-sip-protocol: pcap-print-sip-protocol.o
