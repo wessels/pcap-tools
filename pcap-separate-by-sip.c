@@ -58,11 +58,11 @@ struct _packet {
 };
 
 struct inx_addr {
-	uint8_t family;
-	union {
-		struct in_addr in4;
-		struct in6_addr in6;
-	} u;
+    uint8_t family;
+    union {
+	struct in_addr in4;
+	struct in6_addr in6;
+    }     u;
 };
 
 struct _client {
@@ -90,21 +90,21 @@ static struct inx_addr v6mask;
 int
 inx_addr_hash(struct inx_addr a)
 {
-	if (AF_INET == a.family)
-		return QUAD_A(a);
-	else if (AF_INET6 == a.family)
-		return a.u.in6.__u6_addr.__u6_addr16[0];
-	return 0;
+    if (AF_INET == a.family)
+	return QUAD_A(a);
+    else if (AF_INET6 == a.family)
+	return a.u.in6.__u6_addr.__u6_addr16[0];
+    return 0;
 }
 
 int
 inx_addr_equal(struct inx_addr a, struct inx_addr b)
 {
-	if (a.family != b.family)
-		return 0;
-	if (AF_INET == a.family)
-		return a.u.in4.s_addr == b.u.in4.s_addr;
-	return 0 == memcmp(&a.u.in6, &b.u.in6, 16);
+    if (a.family != b.family)
+	return 0;
+    if (AF_INET == a.family)
+	return a.u.in4.s_addr == b.u.in4.s_addr;
+    return 0 == memcmp(&a.u.in6, &b.u.in6, 16);
 }
 
 void
@@ -141,8 +141,8 @@ hashDelete(struct _client *f)
     struct _client **F;
     for (F = &Hash[i]; *F; F = &(*F)->next)
 	if (f == *F) {
-		*F = f->next;
-		break;
+	    *F = f->next;
+	    break;
 	}
 }
 
@@ -150,40 +150,40 @@ void
 mksubdir(const char *path)
 {
     char *t;
-    for (t = (char *) path; *t; t++) {
+    for (t = (char *)path; *t; t++) {
 	if ('/' == *t) {
-		*t = '\0';
-		if (mkdir(path, 0755) < 0 && EEXIST != errno) {
-			perror(path);
-			exit(1);
-		}
-		*t = '/';
+	    *t = '\0';
+	    if (mkdir(path, 0755) < 0 && EEXIST != errno) {
+		perror(path);
+		exit(1);
+	    }
+	    *t = '/';
 	}
     }
 }
 
 const char *
-output_fname(const struct _client *f) {
-	unsigned int l = 0;
-	static char fname[256];
-    	static char aname[128];
-	inet_ntop(f->addr.family, &f->addr.u, aname, sizeof(aname));
-        if (use_subdirs && AF_INET == f->addr.family) {
-		l += snprintf(&fname[l], sizeof(fname)-l, "%03d/", QUAD_A(f->addr));
-		l += snprintf(&fname[l], sizeof(fname)-l, "%03d/", QUAD_B(f->addr));
-	} else
-        if (use_subdirs && AF_INET6 == f->addr.family) {
-		l += snprintf(&fname[l], sizeof(fname)-l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[0]);
-		l += snprintf(&fname[l], sizeof(fname)-l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[1]);
-	}
-	l += snprintf(&fname[l], sizeof(fname)-l, "%s", aname);
-	if (!input_sorted)
-		l += snprintf(&fname[l], sizeof(fname)-l, "/%lu.%06lu", 
-                        (long unsigned int) f->pkthead->hdr.ts.tv_sec,
-                        (long unsigned int) f->pkthead->hdr.ts.tv_usec);
-	l += snprintf(&fname[l], sizeof(fname)-l, "%s", ".pcap");
-	assert(l < sizeof(fname));
-	return fname;
+output_fname(const struct _client *f)
+{
+    unsigned int l = 0;
+    static char fname[256];
+    static char aname[128];
+    inet_ntop(f->addr.family, &f->addr.u, aname, sizeof(aname));
+    if (use_subdirs && AF_INET == f->addr.family) {
+	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_A(f->addr));
+	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_B(f->addr));
+    } else if (use_subdirs && AF_INET6 == f->addr.family) {
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[0]);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[1]);
+    }
+    l += snprintf(&fname[l], sizeof(fname) - l, "%s", aname);
+    if (!input_sorted)
+	l += snprintf(&fname[l], sizeof(fname) - l, "/%lu.%06lu",
+	    (long unsigned int)f->pkthead->hdr.ts.tv_sec,
+	    (long unsigned int)f->pkthead->hdr.ts.tv_usec);
+    l += snprintf(&fname[l], sizeof(fname) - l, "%s", ".pcap");
+    assert(l < sizeof(fname));
+    return fname;
 }
 
 
@@ -197,18 +197,18 @@ clt_pcap_open(struct _client *f)
     if (input_sorted) {
 	struct stat sb;
 	if (0 == stat(file, &sb)) {
-		fprintf(stderr, "%s already exist, perhaps input is not sorted?\n", file);
-		exit(1);
+	    fprintf(stderr, "%s already exist, perhaps input is not sorted?\n", file);
+	    exit(1);
 	}
     }
     f->fd = pcap_dump_open(in, file);
     if (NULL == f->fd && errno == ENOENT) {
-        mksubdir(file);
-        f->fd = pcap_dump_open(in, file);
+	mksubdir(file);
+	f->fd = pcap_dump_open(in, file);
     }
     if (NULL == f->fd) {
-        perror(file);
-        exit(1);
+	perror(file);
+	exit(1);
     }
     nopen++;
 }
@@ -272,7 +272,7 @@ close_lru(void)
 	struct _client *f = p->data;
 	p = p->prev;
 	if (NULL == f->fd)
-		continue;
+	    continue;
 	clt_pcap_write(f);
 	clt_pcap_close(f);
 	/* clt_free(f); */
@@ -318,7 +318,7 @@ flushall()
 	    if (0 == (n % 1000))
 		fprintf(stderr, "flushed %d clts, open fd: %d\n", n, nopen);
 	    if (nopen >= LIMIT_OPEN_FD)
-	        close_lru();
+		close_lru();
 	}
     }
     fprintf(stderr, "flushed %d\n", n);
@@ -379,9 +379,9 @@ print_stats(struct timeval ts, uint64_t pkt_count)
 {
     struct timeval now;
     gettimeofday(&now, NULL);
-    fprintf(stderr, "%ld.%03ld: at %ld, %12"PRIu64" pkts, %9d clts, %4d files\n",
-	(long) now.tv_sec,
-	(long) now.tv_usec / 1000,
+    fprintf(stderr, "%ld.%03ld: at %ld, %12" PRIu64 " pkts, %9d clts, %4d files\n",
+	(long)now.tv_sec,
+	(long)now.tv_usec / 1000,
 	(long)ts.tv_sec,
 	pkt_count,
 	nclts,
@@ -408,7 +408,7 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
     if (use_mask) {
 	int i;
 	for (i = 0; i < 4; i++)
-		a->u.in6.__u6_addr.__u6_addr32[i] &= v6mask.u.in6.__u6_addr.__u6_addr32[i];
+	    a->u.in6.__u6_addr.__u6_addr32[i] &= v6mask.u.in6.__u6_addr.__u6_addr32[i];
     }
     return 0;
 }
@@ -419,15 +419,15 @@ is_rfc1918(struct inx_addr a)
     unsigned long clt_addr = ntohl(a.u.in4.s_addr);
     if (AF_INET != a.family)
 	return 0;
-    // 10/8
-    if ( ( clt_addr & 0xff000000) == 0x0A000000 )
-        return 1;
-    // 172.16/12
-    if ( ( clt_addr & 0xfff00000) == 0xAC100000 )
-        return 1;
-    // 192.168/16
-    if ( ( clt_addr & 0xffff0000) == 0xC0A80000 )
-        return 1;
+    //10 / 8
+	if ((clt_addr & 0xff000000) == 0x0A000000)
+	return 1;
+    //172.16 / 12
+	if ((clt_addr & 0xfff00000) == 0xAC100000)
+	return 1;
+    //192.168 / 16
+	if ((clt_addr & 0xffff0000) == 0xC0A80000)
+	return 1;
 
     return 0;
 }
@@ -456,90 +456,85 @@ main(int argc, char *argv[])
     LRU = calloc(1, sizeof(LRU));
     assert(LRU);
 
-    // Process command line
-    while ((ch = getopt(argc, argv, "bf:lsm")) != -1) {
-        switch(ch) {
-            case 'b':
-                skip_bogon = 1;
-                break;
-            case 'f':
-                filterfile = strdup(optarg);
-                break;
-            case 'l':
-                use_subdirs = 0;
-                break;
-	    case 's':
-		input_sorted = 1;
-		break;
-	    case 'm':
-		use_mask = 1;
-		break;
-            default:
-                fprintf(stderr, "usage: %s -b -f addr_list_file -l -s -m\n", argv[0]);
-		fprintf(stderr, "\t-b\tskip bogons\n");
-		fprintf(stderr, "\t-f file\tbpf filter file\n");
-		fprintf(stderr, "\t-l\tuse subdirectories\n");
-		fprintf(stderr, "\t-s\tinput is sorted by IP\n");
-		fprintf(stderr, "\t-m\tmask source IPs\n");
-                exit(1);
-                break;
-        }
+    //Process command line
+	while ((ch = getopt(argc, argv, "bf:lsm")) != -1) {
+	switch (ch) {
+	case 'b':
+	    skip_bogon = 1;
+	    break;
+	case 'f':
+	    filterfile = strdup(optarg);
+	    break;
+	case 'l':
+	    use_subdirs = 0;
+	    break;
+	case 's':
+	    input_sorted = 1;
+	    break;
+	case 'm':
+	    use_mask = 1;
+	    break;
+	default:
+	    fprintf(stderr, "usage: %s -b -f addr_list_file -l -s -m\n", argv[0]);
+	    fprintf(stderr, "\t-b\tskip bogons\n");
+	    fprintf(stderr, "\t-f file\tbpf filter file\n");
+	    fprintf(stderr, "\t-l\tuse subdirectories\n");
+	    fprintf(stderr, "\t-s\tinput is sorted by IP\n");
+	    fprintf(stderr, "\t-m\tmask source IPs\n");
+	    exit(1);
+	    break;
+	}
     }
     argc -= optind;
     argv += optind;
 
     if (NULL != filterfile) {
-    // If a filter file was given, read it and prepare
-    if ( (FP = fopen(filterfile, "r")) == NULL)
-    {
-        fprintf(stderr, "Can't read filter file %s, aborting\n",
-        filterfile);
-        exit(1);
-    }
-    filterstr = (char *)calloc(1, MAX_FILTER_SZ);
-    while (fgets(buf, 80, FP))
-    {
-        if (strlen(filterstr) > MAX_FILTER_SZ - 12)
-            continue;
+	//If a filter file was given, read it and prepare
+	    if ((FP = fopen(filterfile, "r")) == NULL) {
+	    fprintf(stderr, "Can't read filter file %s, aborting\n",
+		filterfile);
+	    exit(1);
+	}
+	filterstr = (char *)calloc(1, MAX_FILTER_SZ);
+	while (fgets(buf, 80, FP)) {
+	    if (strlen(filterstr) > MAX_FILTER_SZ - 12)
+		continue;
 
-        if (lc != 0)
-            strcpy(or_str, "or");
-        snprintf(filterstr, MAX_FILTER_SZ, "%s %s src net %s",
-                    filterstr, or_str, buf);
-        ++lc;
-    }
-    fclose(FP);
+	    if (lc != 0)
+		strcpy(or_str, "or");
+	    snprintf(filterstr, MAX_FILTER_SZ, "%s %s src net %s",
+		filterstr, or_str, buf);
+	    ++lc;
+	}
+	fclose(FP);
 
-    // For debugging purporses, write the filter
-    FILE *filter_fp = fopen("filter_pcap.dat", "w");
-    if (NULL == filter_fp)
-        fprintf(stderr, "Can't write filter, skipping\n");
-    else {
-        fprintf(filter_fp, "%s\n", filterstr);
-        fclose(filter_fp);
+	//For debugging purporses, write the filter
+	    FILE * filter_fp = fopen("filter_pcap.dat", "w");
+	if (NULL == filter_fp)
+	    fprintf(stderr, "Can't write filter, skipping\n");
+	else {
+	    fprintf(filter_fp, "%s\n", filterstr);
+	    fclose(filter_fp);
+	}
     }
-    }
-
     in = pcap_open_offline("-", errbuf);
     if (NULL == in) {
 	fprintf(stderr, "stdin: %s", errbuf);
 	exit(1);
     }
-
-    // Set the filter
-    if (NULL != filterstr) {
-        memset(&fp, '\0', sizeof(fp));
-        if (pcap_compile(in, &fp, filterstr, 1, 0) < 0) {
-            fprintf(stderr, "pcap_compile failed: %s\n", pcap_geterr(in));
-            exit(1);
-        }
-        if (pcap_setfilter(in, &fp) < 0) {
-            fprintf(stderr, "pcap_setfilter failed: %s\n", pcap_geterr(in));
-            exit(1);
-        }
-        fprintf(stderr, "Filter read and compiled!\n");
+    //Set the filter
+	if (NULL != filterstr) {
+	memset(&fp, '\0', sizeof(fp));
+	if (pcap_compile(in, &fp, filterstr, 1, 0) < 0) {
+	    fprintf(stderr, "pcap_compile failed: %s\n", pcap_geterr(in));
+	    exit(1);
+	}
+	if (pcap_setfilter(in, &fp) < 0) {
+	    fprintf(stderr, "pcap_setfilter failed: %s\n", pcap_geterr(in));
+	    exit(1);
+	}
+	fprintf(stderr, "Filter read and compiled!\n");
     }
-
     assert(inet_pton(AF_INET, "255.0.0.0", &v4mask.u.in4));
     assert(inet_pton(AF_INET6, "ffff::", &v6mask.u.in4));
 
@@ -553,8 +548,8 @@ main(int argc, char *argv[])
 	handle_pcap((u_char *) & src, &hdr, data);
 	if (src.family == 0)
 	    continue;
-    if (skip_bogon && is_rfc1918(src))
-        continue;
+	if (skip_bogon && is_rfc1918(src))
+	    continue;
 	stash(src, &hdr, data);
 	if (0 == (++pkt_count & 0x3FFF)) {
 	    print_stats(hdr.ts, pkt_count);
