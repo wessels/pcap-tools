@@ -93,7 +93,7 @@ inx_addr_hash(struct inx_addr a)
     if (AF_INET == a.family)
 	return QUAD_A(a);
     else if (AF_INET6 == a.family)
-	return a.u.in6.__u6_addr.__u6_addr16[0];
+	return a.u.in6.__u6_addr.__u6_addr8[3];
     return 0;
 }
 
