@@ -24,7 +24,7 @@
 #define LIMIT_OPEN_FD 8192
 #define LIMIT_CLT_PKTS 2048
 #define LIMIT_MAXRSS (256<<20)
-#define LIMIT_PKTS_IN_MEM (2<<20)
+#define LIMIT_PKTS_IN_MEM (1<<24)
 #define QUAD_A(ip) ((ntohl(ip.u.in4.s_addr) >> 24) & 0xFF)
 #define QUAD_B(ip) ((ntohl(ip.u.in4.s_addr) >> 16) & 0xFF)
 #define QUAD_C(ip) ((ntohl(ip.u.in4.s_addr) >>  8) & 0xFF)
@@ -83,12 +83,17 @@ static unsigned int npacketsmem = 0;
 static pcap_t *in = NULL;
 static int input_sorted = 0;	/* assume input already sorted by sip */
 static int use_subdirs = 1;	/* write files into subdirs */
+static int use_mask = 0;	/* mask source IPs */
+static struct inx_addr v4mask;
+static struct inx_addr v6mask;
 
 int
 inx_addr_hash(struct inx_addr a)
 {
 	if (AF_INET == a.family)
 		return QUAD_A(a);
+	else if (AF_INET6 == a.family)
+		return a.u.in6.__u6_addr.__u6_addr16[0];
 	return 0;
 }
 
@@ -389,6 +394,8 @@ my_ip4_handler(const struct ip *ip4, int len, void *userdata)
     struct inx_addr *a = userdata;
     a->family = AF_INET;
     a->u.in4 = ip4->ip_src;
+    if (use_mask)
+	a->u.in4.s_addr &= v4mask.u.in4.s_addr;
     return 0;
 }
 
@@ -398,6 +405,11 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
     struct inx_addr *a = userdata;
     a->family = AF_INET6;
     a->u.in6 = ip6->ip6_src;
+    if (use_mask) {
+	int i;
+	for (i = 0; i < 4; i++)
+		a->u.in6.__u6_addr.__u6_addr32[i] &= v6mask.u.in6.__u6_addr.__u6_addr32[i];
+    }
     return 0;
 }
 
@@ -445,7 +457,7 @@ main(int argc, char *argv[])
     assert(LRU);
 
     // Process command line
-    while ((ch = getopt(argc, argv, "bf:ls")) != -1) {
+    while ((ch = getopt(argc, argv, "bf:lsm")) != -1) {
         switch(ch) {
             case 'b':
                 skip_bogon = 1;
@@ -459,8 +471,16 @@ main(int argc, char *argv[])
 	    case 's':
 		input_sorted = 1;
 		break;
+	    case 'm':
+		use_mask = 1;
+		break;
             default:
-                fprintf(stderr, "usage: %s [-b] [-f addr_list_file]\n", argv[0]);
+                fprintf(stderr, "usage: %s -b -f addr_list_file -l -s -m\n", argv[0]);
+		fprintf(stderr, "\t-b\tskip bogons\n");
+		fprintf(stderr, "\t-f file\tbpf filter file\n");
+		fprintf(stderr, "\t-l\tuse subdirectories\n");
+		fprintf(stderr, "\t-s\tinput is sorted by IP\n");
+		fprintf(stderr, "\t-m\tmask source IPs\n");
                 exit(1);
                 break;
         }
@@ -520,6 +540,8 @@ main(int argc, char *argv[])
         fprintf(stderr, "Filter read and compiled!\n");
     }
 
+    assert(inet_pton(AF_INET, "255.0.0.0", &v4mask.u.in4));
+    assert(inet_pton(AF_INET6, "ffff::", &v6mask.u.in4));
 
     pcap_layers_init(pcap_datalink(in), 0);
     callback_ipv4 = my_ip4_handler;
