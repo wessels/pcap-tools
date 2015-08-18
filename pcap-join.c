@@ -129,7 +129,7 @@ main(int argc, char *argv[])
     } else for (i = 0; i < argc; i++) {
 	struct stat sb;
 	if (stat(argv[i], &sb) < 0)
-		err(1, argv[i]);
+		err(1, "%s", argv[i]);
 	if (S_ISDIR(sb.st_mode)) {
 		DIR *d;
 		unsigned int filecnt = 0;
@@ -141,7 +141,7 @@ main(int argc, char *argv[])
 		 */
 		d = opendir(argv[i]);
 		if (NULL == d)
-			err(1, argv[i]);
+			err(1, "%s", argv[i]);
 		while (NULL != (e = readdir(d))) {
 			if (*e->d_name == '.')
 				continue;
@@ -155,7 +155,7 @@ main(int argc, char *argv[])
 		filecnt = 0;
 		d = opendir(argv[i]);
 		if (NULL == d)
-			err(1, argv[i]);
+			err(1, "%s", argv[i]);
 		while (NULL != (e = readdir(d))) {
 			char path[512];
 			if (*e->d_name == '.')

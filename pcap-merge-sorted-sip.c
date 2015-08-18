@@ -96,7 +96,7 @@ my_pcap_dump_open(pcap_t * other, const char *f)
     pcap_dumper_t *out;
     out = pcap_dump_open(other, f);
     if (NULL == out)
-	errx(1, f);
+	errx(1, "%s", f);
     return out;
 }
 

@@ -32,11 +32,6 @@
 
 #define MAX_FILTER_SZ 256*1024
 
-#ifdef __GLIBC__
-#define __u6_addr __in6_u
-#endif
-
-
 typedef struct _dlink_node dlink_node;
 typedef struct _dlink_list dlink_list;
 
@@ -93,7 +88,7 @@ inx_addr_hash(struct inx_addr a)
     if (AF_INET == a.family)
 	return QUAD_A(a);
     else if (AF_INET6 == a.family)
-	return a.u.in6.__u6_addr.__u6_addr8[3];
+	return a.u.in6.s6_addr[3];
     return 0;
 }
 
@@ -173,8 +168,8 @@ output_fname(const struct _client *f)
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_A(f->addr));
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_B(f->addr));
     } else if (use_subdirs && AF_INET6 == f->addr.family) {
-	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[0]);
-	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[1]);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[0]);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[1]);
     }
     l += snprintf(&fname[l], sizeof(fname) - l, "%s", aname);
     if (!input_sorted)
@@ -408,7 +403,7 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
     if (use_mask) {
 	int i;
 	for (i = 0; i < 4; i++)
-	    a->u.in6.__u6_addr.__u6_addr32[i] &= v6mask.u.in6.__u6_addr.__u6_addr32[i];
+	    a->u.in6.s6_addr32[i] &= v6mask.u.in6.s6_addr32[i];
     }
     return 0;
 }
