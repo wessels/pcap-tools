@@ -101,7 +101,7 @@ push(struct pcap_pkthdr *hdr, const u_char * data)
 void
 usage(void)
 {
-    fprintf(stderr, "usage: tcpdump-reorder [-s] sortsize\n");
+    fprintf(stderr, "usage: pcap-reorder [-s] sortsize\n");
     fprintf(stderr, "\t-s\tinput is sorted by source IP\n");
     exit(1);
 }

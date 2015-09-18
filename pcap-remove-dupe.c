@@ -34,7 +34,7 @@ main(int argc, char *argv[])
     int ndupes = 0;
 
     if (argc < 2) {
-	fprintf(stderr, "usage: tcpdump-remove-dupe pcapfiles ...");
+	fprintf(stderr, "usage: pcap-remove-dupe pcapfiles ...");
 	exit(1);
     }
     for (i = 1; i < argc; i++) {

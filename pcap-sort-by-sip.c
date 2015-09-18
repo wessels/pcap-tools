@@ -279,7 +279,7 @@ int
 main(int argc, char *argv[])
 {
     if (argc != 1) {
-	fprintf(stderr, "usage: tcpdump-sort-by-sip < in > out\n");
+	fprintf(stderr, "usage: pcap-sort-by-sip < in > out\n");
 	exit(1);
     }
     signal(SIGHUP, cleanup);

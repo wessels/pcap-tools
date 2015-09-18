@@ -17,7 +17,7 @@
 #define STOP_OPT   1002
 
 static const char *kick_cmd = NULL;
-static const char *ProgramName = "tcpdump-split";
+static const char *ProgramName = "pcap-split";
 static const char *gzext = ".gz";
 static int opt_gzip = 0;
 static int opt_verbose = 0;

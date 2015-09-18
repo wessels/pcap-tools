@@ -62,7 +62,7 @@ main(int argc, char *argv[])
 
 
     if (argc < 2) {
-	fprintf(stderr, "usage: tcpdump-reorder sortsize\n");
+	fprintf(stderr, "usage: pcap-reorder sortsize\n");
 	exit(1);
     }
     ARRAYSZ = atoi(argv[1]);

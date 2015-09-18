@@ -20,7 +20,7 @@ main(int argc, char *argv[])
 
 
     if (argc < 3) {
-	fprintf(stderr, "usage: tcpdump-extract-interval begin end\n");
+	fprintf(stderr, "usage: pcap-extract-interval begin end\n");
 	exit(1);
     }
     beg = atoi(argv[1]);

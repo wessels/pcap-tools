@@ -88,7 +88,7 @@ qsort_strcmp(const void *a, const void *b)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: tcpdump-join pcapfiles ...\n       tcpdump-join directory\n       tcpdump-join\t(read files from stdin)\n");
+	fprintf(stderr, "usage: pcap-join pcapfiles ...\n       pcap-join directory\n       pcap-join\t(read files from stdin)\n");
 	exit(1);
 }
 

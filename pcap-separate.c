@@ -71,7 +71,7 @@ main(int argc, char *argv[])
     struct _item *i;
 
     if (2 != argc) {
-	fprintf(stderr, "usage: tcpdump-separate listfile\n");
+	fprintf(stderr, "usage: pcap-separate listfile\n");
 	exit(1);
     }
 

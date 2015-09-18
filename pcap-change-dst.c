@@ -46,7 +46,7 @@ main(int argc, char *argv[])
 
 
     if (argc < 2) {
-	fprintf(stderr, "usage: tcpdump-change-dst dst-ipv4 dst-ipv6\n");
+	fprintf(stderr, "usage: pcap-change-dst dst-ipv4 dst-ipv6\n");
 	exit(1);
     }
     if (inet_pton(AF_INET, argv[1], &dst4) != 1) {

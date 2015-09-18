@@ -22,7 +22,7 @@ main(int argc, char *argv[])
    
 
     if (argc < 2) {
-	fprintf(stderr, "usage: tcpdump-adjust-timestamp adjust\n");
+	fprintf(stderr, "usage: pcap-adjust-timestamp adjust\n");
 	exit(1);
     }
 
