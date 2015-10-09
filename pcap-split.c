@@ -12,7 +12,8 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-#define DEF_FMT "%s"
+#define DEF_TIME_FMT "%s"
+#define DEF_COUNT_FMT "%09d.pcap"
 #define START_OPT  1001
 #define STOP_OPT   1002
 
@@ -118,7 +119,7 @@ main(int argc, char *argv[])
 
     /* If not format given, use the default */
     if (NULL == fmt)
-        fmt = strdup(DEF_FMT);
+        fmt = strdup(modulus ? DEF_TIME_FMT : DEF_COUNT_FMT);
 
     in = pcap_open_offline("-", errbuf);
     if (NULL == in) {
