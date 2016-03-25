@@ -15,6 +15,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "pcap-tools.h"
 #include "pcap_layers.h"
 
 
@@ -55,16 +56,6 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
     *((int *)userdata) = ip6->ip6_src.s6_addr[15 - theLevel];
     return 0;
-}
-
-pcap_t *
-my_pcap_open_offline(const char *f)
-{
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
-    pcap_t *in = pcap_open_offline(f, errbuf);
-    if (NULL == in)
-	errx(1, "[%d] %s(%d) %s: %s", getpid(), __FILE__,__LINE__,f, errbuf);
-    return in;
 }
 
 void

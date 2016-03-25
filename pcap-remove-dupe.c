@@ -7,6 +7,8 @@
 #include <time.h>
 #include <errno.h>
 
+#include "pcap-tools.h"
+
 #ifdef __GLIBC__
 #include <openssl/md5.h>
 #define MD5Init MD5_Init
@@ -27,7 +29,6 @@ main(int argc, char *argv[])
 {
     pcap_t *in = NULL;
     pcap_dumper_t *out = NULL;
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr hdr;
     const u_char *data;
     int i;
@@ -38,11 +39,7 @@ main(int argc, char *argv[])
 	exit(1);
     }
     for (i = 1; i < argc; i++) {
-	in = pcap_open_offline(argv[i], errbuf);
-	if (NULL == in) {
-	    fprintf(stderr, "%s: %s", argv[i], errbuf);
-	    exit(1);
-	}
+	in = my_pcap_open_offline(argv[i]);
 	while ((data = pcap_next(in, &hdr))) {
 	    if (is_dupe(&hdr, data)) {
 		ndupes++;

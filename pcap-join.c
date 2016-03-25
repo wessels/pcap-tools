@@ -13,6 +13,8 @@
 #include <getopt.h>
 #include <err.h>
 
+#include "pcap-tools.h"
+
 pcap_dumper_t *out = NULL;
 unsigned int fifocount = 0;
 const char *filterstr = 0;
@@ -23,36 +25,10 @@ void
 join(const char *pcapfile)
 {
     pcap_t *in = NULL;
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr hdr;
     const u_char *data;
-    char fifoname[256];
     int waitstatus;
-    const char *readfile = pcapfile;
-    fifoname[0] = '\0';
-    if (0 == strcmp(pcapfile + strlen(pcapfile) - 3, ".gz")) {
-	snprintf(fifoname, 256, "/tmp/fifo.%d.%u", getpid(), fifocount++);
-	mkfifo(fifoname, 0600);
-	if (0 == fork()) {
-	    close(1);
-	    open(fifoname, O_WRONLY);
-	    execl("/usr/bin/gzip", "/usr/bin/gzip", "-dc", pcapfile, NULL);
-	    perror("gzip");
-	    abort();
-	}
-	readfile = fifoname;
-    }
-    in = pcap_open_offline(readfile, errbuf);
-    if (fifoname[0])
-	unlink(fifoname);
-    if (NULL == in && fifoname[0]) {
-	waitpid(-1, &waitstatus, 0);
-	return;
-    }
-    if (NULL == in) {
-	fprintf(stderr, "%s: %s", pcapfile, errbuf);
-	exit(1);
-    }
+    in = my_pcap_open_offline(pcapfile);
     if (filterstr) {
         struct bpf_program fp;
         memset(&fp, '\0', sizeof(fp));

@@ -1,3 +1,5 @@
+OBJS=\
+pcap-tools.o
 
 PROGS= \
 pcap-extract-interval \
@@ -41,78 +43,81 @@ CFLAGS = -Wall -g ${INCDIRS}
 
 all: ${PROGS}
 
+pcap-tools.o: pcap-tools.c pcap-tools.h
+	${CC} -c -o $@ pcap-tools.c
+
 
 pcap-extract-interval: pcap-extract-interval.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-subtract-timestamp: pcap-subtract-timestamp.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-join: pcap-join.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-remove-dupe: pcap-remove-dupe.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBMD5}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBMD5}
 
 pcap-remove-bogus: pcap-remove-bogus.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-split: pcap-split.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-change-dst: pcap-change-dst.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-change-ip: pcap-change-ip.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-decapsulate-gre: pcap-decapsulate-gre.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-find-misordered: pcap-find-misordered.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-reorder: pcap-reorder.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-fix-linux-af-inet6: pcap-fix-linux-af-inet6.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-strip-vlans: pcap-strip-vlans.o
-	${CC} -o $@ ${@}.o ${LIBPCAP}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP}
 
 pcap-print-sip: pcap-print-sip.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-print-tcp-options: pcap-print-tcp-options.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-print-sip-protocol: pcap-print-sip-protocol.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-separate-by-sip: pcap-separate-by-sip.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-separate-by-connection: pcap-separate-by-connection.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-sort-by-sip: pcap-sort-by-sip.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-separate: pcap-separate.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-to-dlt-loop: pcap-to-dlt-loop.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-to-dlt-raw: pcap-to-dlt-raw.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-to-dlt-en10mb: pcap-to-dlt-en10mb.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-merge-sorted-sip: pcap-merge-sorted-sip.o
-	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 
 clean:

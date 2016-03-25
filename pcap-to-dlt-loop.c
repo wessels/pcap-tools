@@ -46,7 +46,6 @@ int
 main(int argc, char *argv[])
 {
     pcap_t *in = NULL;
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr hdr;
     const u_char *data;
     pcap_dumper_t *out = NULL;
@@ -58,11 +57,7 @@ main(int argc, char *argv[])
 	exit(1);
     }
 
-    in = pcap_open_offline(argv[1], errbuf);
-    if (NULL == in) {
-	fprintf(stderr, "%s: %s", argv[1], errbuf);
-	exit(1);
-    }
+    in = my_pcap_open_offline(argv[1]);
     dead = pcap_open_dead(DLT_LOOP, 65536);
     if (NULL == dead) {
 	perror("pcap_open_dead");

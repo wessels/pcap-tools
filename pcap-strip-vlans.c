@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <getopt.h>
 
+#include "pcap-tools.h"
+
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #include <sys/socket.h>
@@ -57,7 +59,6 @@ main(int argc, char *argv[])
 {
     pcap_t *in = NULL;
     pcap_dumper_t *out = NULL;
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr hdr;
     const u_char *data;
     int i;
@@ -83,11 +84,7 @@ main(int argc, char *argv[])
     if (argc < 1)
 	usage();
     for (i = 0; i < argc; i++) {
-	in = pcap_open_offline(argv[i], errbuf);
-	if (NULL == in) {
-	    fprintf(stderr, "%s: %s", argv[i], errbuf);
-	    exit(1);
-	}
+	in = my_pcap_open_offline(argv[i]);
 	dlt = pcap_datalink(in);
 	while ((data = pcap_next(in, &hdr))) {
 	    if (DLT_EN10MB == dlt && needs_fixing(&hdr, data)) {

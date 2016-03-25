@@ -40,5 +40,6 @@
     } while (0)
 #endif
 
+pcap_t * my_pcap_open_offline(const char *pcapfile);
 
 #endif /* PCAP_TOOLS_H */

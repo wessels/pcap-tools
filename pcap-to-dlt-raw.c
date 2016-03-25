@@ -13,6 +13,7 @@
 #include <netinet/ip6.h>
 #include <arpa/inet.h>
 
+#include "pcap-tools.h"
 #include "pcap_layers.h"
 
 const char *progname;
@@ -42,7 +43,6 @@ int
 main(int argc, char *argv[])
 {
     pcap_t *in = NULL;
-    char errbuf[PCAP_ERRBUF_SIZE + 1];
     struct pcap_pkthdr in_hdr;
     const u_char *data;
     pcap_dumper_t *out = NULL;
@@ -54,11 +54,7 @@ main(int argc, char *argv[])
 	exit(1);
     }
 
-    in = pcap_open_offline(argv[1], errbuf);
-    if (NULL == in) {
-	fprintf(stderr, "%s: %s", argv[1], errbuf);
-	exit(1);
-    }
+    in = my_pcap_open_offline(argv[1]);
     dead = pcap_open_dead(DLT_RAW, 65536);
     if (NULL == dead) {
 	perror("pcap_open_dead");
