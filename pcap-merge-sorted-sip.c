@@ -73,7 +73,7 @@ read_next_packet(struct _in *in)
 	const u_char *data;
     	data = pcap_next(in->pcap, &in->hdr);
 	if (0 == data) {
-		pcap_close(in->pcap);
+		my_pcap_close_offline(in->pcap);
 		in->pcap = 0;
 		return;
 	}

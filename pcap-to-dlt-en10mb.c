@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 	    if (out_hdr.len)
 		pcap_dump((void *)out, &out_hdr, out_data);
     }
-    pcap_close(in);
+    my_pcap_close_offline(in);
     pcap_dump_close(out);
     exit(0);
 }

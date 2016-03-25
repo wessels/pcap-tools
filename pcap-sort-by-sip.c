@@ -124,7 +124,7 @@ pcap_sort(const char *inf, const char *outf, int level)
 
     /* fprintf(stderr, "Writing '%s' at level %d\n", outf, theLevel); */
     pcap_out = pcap_dump_open(in, outf);
-    pcap_close(in);	/* close 'in; after using it to open 'out' */
+    my_pcap_close_offline(in);	/* close 'in; after using it to open 'out' */
     in = 0;
     for (i = 0; i < N_SPLIT; i++) {
 	char tf[128];
@@ -136,7 +136,7 @@ pcap_sort(const char *inf, const char *outf, int level)
 	in = my_pcap_open_offline(tf);
 	while ((data = pcap_next(in, &hdr)))
 	    pcap_dump((void *)pcap_out, &hdr, data);
-	pcap_close(in);
+	my_pcap_close_offline(in);
 	if (0 != unlink(tf))
 	    warn("unlink: %s", tf);
     }
@@ -207,7 +207,7 @@ pcap_copy_fd_to_dump(int fd, pcap_dumper_t *out)
 	pcap_dump((u_char *) out, &hdr, data);
 	count++;
     }
-    pcap_close(in);
+    my_pcap_close_offline(in);
     return count;
 }
 
@@ -255,7 +255,7 @@ pcap_sort_by_af_spawn(const char *inf, const char *outf)
     pcap_dump_close(v6dump);
 
     out = my_pcap_dump_open(in, outf);
-    pcap_close(in);
+    my_pcap_close_offline(in);
     v4sorted = pcap_copy_fd_to_dump(v4rfd, out);
     v6sorted = pcap_copy_fd_to_dump(v6rfd, out);
     gettimeofday(&stop, NULL);

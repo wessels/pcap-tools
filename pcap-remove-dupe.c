@@ -54,7 +54,7 @@ main(int argc, char *argv[])
 	    }
 	    pcap_dump((void *)out, &hdr, data);
 	}
-	pcap_close(in);
+	my_pcap_close_offline(in);
     }
     if (out)
 	pcap_dump_close(out);

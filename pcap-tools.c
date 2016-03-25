@@ -49,3 +49,11 @@ my_pcap_open_offline(const char *pcapfile)
 	errx(1, "[%d] %s(%d) %s: %s", getpid(), __FILE__,__LINE__, pcapfile, errbuf);
     return in;
 }
+
+void
+my_pcap_close_offline(pcap_t *in)
+{
+    int waitstatus;
+    pcap_close(in);
+    waitpid(-1, &waitstatus, 0);
+}

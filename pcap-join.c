@@ -27,7 +27,6 @@ join(const char *pcapfile)
     pcap_t *in = NULL;
     struct pcap_pkthdr hdr;
     const u_char *data;
-    int waitstatus;
     in = my_pcap_open_offline(pcapfile);
     if (filterstr) {
         struct bpf_program fp;
@@ -51,8 +50,7 @@ join(const char *pcapfile)
 	}
 	pcap_dump((void *)out, &hdr, data);
     }
-    pcap_close(in);
-    waitpid(-1, &waitstatus, 0);
+    my_pcap_close_offline(in);
 }
 
 int
