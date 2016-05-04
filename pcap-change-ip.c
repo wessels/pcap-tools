@@ -73,7 +73,7 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: pcap-change-dst from-ip4/prefixlen new-ip4 from-ip6/prefixlen new-ip6\n");
+	fprintf(stderr, "usage: pcap-change-ip from-ip4/prefixlen new-ip4 from-ip6/prefixlen new-ip6\n");
 	exit(1);
 }
 
