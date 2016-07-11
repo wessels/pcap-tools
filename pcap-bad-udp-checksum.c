@@ -64,7 +64,6 @@ my_udp_handler(const struct udphdr *udp, int len, void *userdata)
 	return 0;
     if (0 == udp->check)
 	return 0;
-#if 1
     memset(&pseudo[0], 0, sizeof(pseudo));
     if (4 == inx_addr_version(&s->src)) {
         memcpy(&pseudo[0], &s->src._.in4, 4);
@@ -78,15 +77,6 @@ my_udp_handler(const struct udphdr *udp, int len, void *userdata)
     for (i = 0; i < sizeof(pseudo) / sizeof(unsigned short); i++)
 	ps += pseudo[i];
     unsigned int calc_sum = in_cksum((unsigned short *) udp, len, ps);
-#else
-    memcpy(&pseudo[0], &s->src._.in4, 4);
-    memcpy(&pseudo[2], &s->dst._.in4, 4);
-    pseudo[4] = htons(IPPROTO_UDP);
-    pseudo[5] = htons((unsigned short) len);
-	fprintf(stderr, "ps=%hu\n", pseudo[0]+pseudo[1]+pseudo[2]+pseudo[3]+pseudo[4]+pseudo[5]);
-    unsigned int calc_sum = in_cksum((unsigned short *) udp, len,
-	pseudo[0]+pseudo[1]+pseudo[2]+pseudo[3]+pseudo[4]+pseudo[5]);
-#endif
     if (0 != calc_sum)
 	s->cksum_bad = 1;
     return 0;
