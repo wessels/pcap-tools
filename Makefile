@@ -25,7 +25,9 @@ pcap-merge-sorted-sip \
 pcap-separate \
 pcap-to-dlt-loop \
 pcap-to-dlt-raw \
-pcap-to-dlt-en10mb
+pcap-to-dlt-en10mb \
+pcap-bad-udp-checksum
+#pcap-print-time-sip-len \
 
 LIBPCAP=-lpcap
 
@@ -118,6 +120,12 @@ pcap-to-dlt-en10mb: pcap-to-dlt-en10mb.o ${OBJS}
 
 pcap-merge-sorted-sip: pcap-merge-sorted-sip.o ${OBJS}
 	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
+
+#pcap-print-time-sip-len: pcap-print-time-sip-len.o
+	#${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-bad-udp-checksum: pcap-bad-udp-checksum.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS} -linx_addr_c
 
 
 clean:
