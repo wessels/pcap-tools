@@ -25,7 +25,7 @@ struct _pkt {
 int npkts = 0;
 struct _pkt *packets;
 struct timeval max_flushed = {0, 0};
-
+int sort_err_fatal = 0;
 
 int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
@@ -94,6 +94,8 @@ push(struct pcap_pkthdr *hdr, const u_char * data)
 	    (long long int)max_flushed.tv_usec,
 	    (long long int)hdr->ts.tv_sec,
 	    (long long int)hdr->ts.tv_usec);
+	if (sort_err_fatal)
+	    exit(1);
     }
     npkts++;
 }
@@ -119,10 +121,13 @@ main(int argc, char *argv[])
     u_char this_sip[16];
     u_char that_sip[16];
 
-    while ((ch = getopt(argc, argv, "s")) != -1) {
+    while ((ch = getopt(argc, argv, "sx")) != -1) {
 	switch (ch) {
 	case 's':
 	    sip_sorted = 1;
+	    break;
+	case 'x':
+	    sort_err_fatal = 1;
 	    break;
 	case '?':
 	default:
