@@ -6,6 +6,9 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include "pcap-tools.h"
 

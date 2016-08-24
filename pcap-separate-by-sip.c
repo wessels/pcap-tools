@@ -168,8 +168,13 @@ output_fname(const struct _client *f)
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_A(f->addr));
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_B(f->addr));
     } else if (use_subdirs && AF_INET6 == f->addr.family) {
+#ifdef __APPLE__
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[0]);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.__u6_addr.__u6_addr16[1]);
+#else
 	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[0]);
 	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[1]);
+#endif
     }
     l += snprintf(&fname[l], sizeof(fname) - l, "%s", aname);
     if (!input_sorted)
@@ -403,7 +408,11 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
     if (use_mask) {
 	int i;
 	for (i = 0; i < 4; i++)
+#ifdef __APPLE__
+	    a->u.in6.__u6_addr.__u6_addr32[i] &= v6mask.u.in6.__u6_addr.__u6_addr32[i];
+#else
 	    a->u.in6.s6_addr32[i] &= v6mask.u.in6.s6_addr32[i];
+#endif
     }
     return 0;
 }

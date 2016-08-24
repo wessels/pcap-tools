@@ -218,7 +218,7 @@ output_fname(const conn *f)
 	dst_s,
 	f->tuple.dport,
 	f->pkthead->hdr.ts.tv_sec,
-	f->pkthead->hdr.ts.tv_usec);
+	(unsigned long) f->pkthead->hdr.ts.tv_usec);
     return fname;
 }
 
