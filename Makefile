@@ -1,4 +1,4 @@
-PREFIX=${HOME}
+PREFIX=/usr/local
 OBJS=\
 pcap-tools.o
 
