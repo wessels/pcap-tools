@@ -1,3 +1,4 @@
+PREFIX=${HOME}
 OBJS=\
 pcap-tools.o
 
@@ -31,15 +32,15 @@ pcap-bad-udp-checksum
 
 LIBPCAP=-lpcap
 
-LIBPCAPLAYERS=-lpcap_layers
+LIBPCAPLAYERS=-L${PREFIX}/lib -lpcap_layers
 
 # BSD
 #LIBMD5=-lmd
 #INCDIRS=
 
 # LINUX
-LIBMD5=-lcrypto
-INCDIRS=
+LIBMD5=-lcrypto 
+INCDIRS=-I${PREFIX}/include
 
 CFLAGS = -Wall -g ${INCDIRS}
 
@@ -135,6 +136,6 @@ clean:
 
 install:
 	@for f in ${PROGS}; do \
-		echo "install -C -m 755 $$f /usr/local/bin"; \
-		install -C -m 755 $$f /usr/local/bin ; \
+		echo "install -C -m 755 $$f ${PREFIX}/bin"; \
+		install -C -m 755 $$f ${PREFIX}/bin ; \
 	done
