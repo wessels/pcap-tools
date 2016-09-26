@@ -168,8 +168,10 @@ output_fname(const struct _client *f)
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_A(f->addr));
 	l += snprintf(&fname[l], sizeof(fname) - l, "%03d/", QUAD_B(f->addr));
     } else if (use_subdirs && AF_INET6 == f->addr.family) {
-	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[0]);
-	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", f->addr.u.in6.s6_addr16[1]);
+	unsigned short v6[8];
+	memcpy(&v6[0], &f->addr.u.in6.s6_addr, 16);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", v6[0]);
+	l += snprintf(&fname[l], sizeof(fname) - l, "%04x/", v6[1]);
     }
     l += snprintf(&fname[l], sizeof(fname) - l, "%s", aname);
     if (!input_sorted)
@@ -402,8 +404,8 @@ my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
     a->u.in6 = ip6->ip6_src;
     if (use_mask) {
 	int i;
-	for (i = 0; i < 4; i++)
-	    a->u.in6.s6_addr32[i] &= v6mask.u.in6.s6_addr32[i];
+	for (i = 0; i < 16; i++)
+	    a->u.in6.s6_addr[i] &= v6mask.u.in6.s6_addr[i];
     }
     return 0;
 }

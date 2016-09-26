@@ -62,8 +62,13 @@ my_udp_handler(const struct udphdr *udp, int len, void *userdata)
     s->proto = 17;
     if (s->frag)
 	return 0;
+#ifdef __linux__
     if (0 == udp->check)
 	return 0;
+#else
+    if (0 == udp->uh_sum)
+	return 0;
+#endif
     memset(&pseudo[0], 0, sizeof(pseudo));
     if (4 == inx_addr_version(&s->src)) {
         memcpy(&pseudo[0], &s->src._.in4, 4);
