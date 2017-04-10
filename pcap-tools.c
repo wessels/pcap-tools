@@ -26,6 +26,17 @@ my_pcap_open_offline(const char *pcapfile)
             abort();
         }
         readfile = fifoname;
+    } else if (0 == strcmp(pcapfile + strlen(pcapfile) - 4, ".bz2")) {
+        snprintf(fifoname, 256, "/tmp/fifo.%d.%u", getpid(), fifocount++);
+        mkfifo(fifoname, 0600);
+        if (0 == fork()) {
+            close(1);
+            open(fifoname, O_WRONLY);
+            execl("/usr/bin/bzip2", "/usr/bin/bzip2", "-dc", pcapfile, NULL);
+            perror("bzip2");
+            abort();
+        }
+        readfile = fifoname;
     } else if (0 == strcmp(pcapfile + strlen(pcapfile) - 3, ".xz")) {
         snprintf(fifoname, 256, "/tmp/fifo.%d.%u", getpid(), fifocount++);
         mkfifo(fifoname, 0600);
