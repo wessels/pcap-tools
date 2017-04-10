@@ -21,7 +21,7 @@ my_pcap_open_offline(const char *pcapfile)
         if (0 == fork()) {
             close(1);
             open(fifoname, O_WRONLY);
-            execl("/usr/bin/gzip", "/usr/bin/gzip", "-dc", pcapfile, NULL);
+            execlp("gzip", "gzip", "-dc", pcapfile, NULL);
             perror("gzip");
             abort();
         }
@@ -32,7 +32,7 @@ my_pcap_open_offline(const char *pcapfile)
         if (0 == fork()) {
             close(1);
             open(fifoname, O_WRONLY);
-            execl("/usr/bin/bzip2", "/usr/bin/bzip2", "-dc", pcapfile, NULL);
+            execlp("bzip2", "bzip2", "-dc", pcapfile, NULL);
             perror("bzip2");
             abort();
         }
@@ -43,7 +43,7 @@ my_pcap_open_offline(const char *pcapfile)
         if (0 == fork()) {
             close(1);
             open(fifoname, O_WRONLY);
-            execl("/usr/bin/xz", "/usr/bin/xz", "-dc", pcapfile, NULL);
+            execlp("xz", "xz", "-dc", pcapfile, NULL);
             perror("xz");
             abort();
         }
