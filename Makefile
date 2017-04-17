@@ -133,6 +133,7 @@ clean:
 	@for f in ${PROGS}; do \
 		rm -fv $$f.o $$f ; \
 	done
+	rm -fv ${OBJS}
 
 install:
 	@for f in ${PROGS}; do \
