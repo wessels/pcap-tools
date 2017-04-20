@@ -126,6 +126,9 @@ pcap-merge-sorted-sip: pcap-merge-sorted-sip.o ${OBJS}
 #pcap-print-time-sip-len: pcap-print-time-sip-len.o
 	#${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS}
 
+pcap-print-time-qname-qtype-rcode: pcap-print-time-qname-qtype-rcode.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS} -lldns
+
 pcap-bad-udp-checksum: pcap-bad-udp-checksum.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS} -linx_addr_c
 
