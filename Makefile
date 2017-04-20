@@ -19,6 +19,7 @@ pcap-strip-vlans \
 pcap-print-sip \
 pcap-print-tcp-options \
 pcap-print-sip-protocol \
+pcap-print-time-qname-qtype-rcode \
 pcap-separate-by-sip \
 pcap-separate-by-connection \
 pcap-sort-by-sip \
