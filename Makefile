@@ -9,6 +9,7 @@ pcap-join \
 pcap-remove-dupe \
 pcap-remove-bogus \
 pcap-split \
+pcap-sample \
 pcap-change-dst \
 pcap-change-ip \
 pcap-decapsulate-gre \
@@ -131,6 +132,9 @@ pcap-print-time-qname-qtype-rcode: pcap-print-time-qname-qtype-rcode.o
 
 pcap-bad-udp-checksum: pcap-bad-udp-checksum.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS} -linx_addr_c
+
+pcap-sample: pcap-sample.o ${OBJS}
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${OBJS}
 
 
 clean:
