@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <inttypes.h>
 #include <ldns/ldns.h>
+#include <getopt.h>
 
 #include <pcap.h>
 #include "pcap_layers.h"
@@ -29,6 +30,7 @@
 
 static pcap_t *in = NULL;
 static struct pcap_pkthdr hdr;
+static int include_queries = 0;
 
 int
 my_dns_handler(const u_char *buf, int len, void *userdata)
@@ -41,7 +43,7 @@ my_dns_handler(const u_char *buf, int len, void *userdata)
     char *qn_str = 0;
     if (LDNS_STATUS_OK != ldns_wire2pkt(&pkt, buf, len))
         goto done;
-    if (1 != ldns_pkt_qr(pkt))
+    if (1 != ldns_pkt_qr(pkt) && !include_queries)
         goto done;
     qd = ldns_pkt_question(pkt);
     if (0 == qd)
@@ -71,6 +73,21 @@ main(int argc, char *argv[])
 {
     char errbuf[PCAP_ERRBUF_SIZE + 1];
     const u_char *data;
+    int i;
+
+    while ((i = getopt(argc, argv, "q")) != -1) {
+        switch (i) {
+        case 'q':
+            include_queries = 1;
+            break;
+        case '?':
+        default:
+            fprintf(stderr, "usage: %s [-q] < pcap-in\n", argv[0]);
+	    exit(1);
+        }
+    }
+    argc -= optind;
+    argv += optind;
 
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
