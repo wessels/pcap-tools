@@ -42,10 +42,11 @@ my_dns_handler(const u_char *buf, int len, void *userdata)
     while (rdata_len >= 4) {
 	unsigned short option_code = nptohs(rdata);
 	unsigned short option_len = nptohs(rdata+2);
-	if (verbose)
-	    fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
-        if (only_option_code == 0 || only_option_code == option_code)
+        if (only_option_code == 0 || only_option_code == option_code) {
 	    *flag = 1;
+	    if (verbose)
+	        fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
+        }
         rdata_len -= 4;
 	rdata += 4;
         if (option_len > rdata_len)
