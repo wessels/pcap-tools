@@ -29,7 +29,8 @@ pcap-separate \
 pcap-to-dlt-loop \
 pcap-to-dlt-raw \
 pcap-to-dlt-en10mb \
-pcap-bad-udp-checksum
+pcap-bad-udp-checksum \
+pcap-dns-find-edns-opt \
 #pcap-print-time-sip-len \
 
 LIBPCAP=-lpcap
@@ -132,6 +133,9 @@ pcap-print-time-qname-qtype-rcode: pcap-print-time-qname-qtype-rcode.o
 
 pcap-bad-udp-checksum: pcap-bad-udp-checksum.o
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${LIBPCAPLAYERS} -linx_addr_c
+
+pcap-dns-find-edns-opt: pcap-dns-find-edns-opt.o
+	${CC} -o $@ ${@}.o ${LIBPCAP} ${OBJS} ${LIBPCAPLAYERS} -lldns
 
 pcap-sample: pcap-sample.o ${OBJS}
 	${CC} -o $@ ${@}.o ${LIBPCAP} ${OBJS}
