@@ -22,7 +22,6 @@
 #endif
 
 const char *progname;
-u_char out_data[65536];
 
 struct state {
 	inx_addr src;
@@ -121,7 +120,6 @@ main(int argc, char *argv[])
     pcap_dumper_t *out = NULL;
     struct state S;
 
-    memset(out_data, 0, sizeof(out_data));
     progname = argv[0];
     if (argc < 2) {
 	fprintf(stderr, "usage: %s pcapfiles\n", progname);
