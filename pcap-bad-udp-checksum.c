@@ -17,10 +17,6 @@
 #include <inx_addr_c.h>
 #include "pcap-tools.h"
 
-#ifndef ETHERTYPE_IPV6
-#define ETHERTYPE_IPV6 0x86dd
-#endif
-
 const char *progname;
 
 struct state {
