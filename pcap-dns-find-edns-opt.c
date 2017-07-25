@@ -21,7 +21,8 @@
 #include <ldns/ldns.h>
 
 const char *progname = 0;
-unsigned int edns_option_code = 0;
+unsigned int only_option_code = 0;
+unsigned int verbose = 0;
 
 int
 my_dns_handler(const u_char *buf, int len, void *userdata)
@@ -36,13 +37,15 @@ my_dns_handler(const u_char *buf, int len, void *userdata)
 	goto done;
     if (LDNS_RDF_TYPE_UNKNOWN != ldns_rdf_get_type(opt))
 	goto done;
-    *flag = 1;
     unsigned short rdata_len = ldns_rdf_size(opt);
     unsigned char *rdata = ldns_rdf_data(opt);
     while (rdata_len >= 4) {
 	unsigned short option_code = nptohs(rdata);
 	unsigned short option_len = nptohs(rdata+2);
-	fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
+	if (verbose)
+	    fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
+        if (only_option_code == 0 || only_option_code == option_code)
+	    *flag = 1;
         rdata_len -= 4;
 	rdata += 4;
         if (option_len > rdata_len)
@@ -67,10 +70,13 @@ main(int argc, char *argv[])
 
     progname = strdup(argv[0]);
 
-    while ((flag = getopt(argc, argv, "o:")) != -1) {
+    while ((flag = getopt(argc, argv, "o:v")) != -1) {
         switch(flag) {
 	case 'o':
-		edns_option_code = strtoul(optarg, 0, 0);
+		only_option_code = strtoul(optarg, 0, 0);
+		break;
+	case 'v':
+		verbose++;
 		break;
 	}
     }
