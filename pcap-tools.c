@@ -4,6 +4,8 @@
 #include <pcap.h>
 #include <string.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 
 pcap_t *
 my_pcap_open_offline(const char *pcapfile)
