@@ -27,6 +27,8 @@ join(const char *pcapfile)
     pcap_t *in = NULL;
     struct pcap_pkthdr hdr;
     const u_char *data;
+    if (verbose > 0)
+	fprintf(stderr, "Joining %s\n", pcapfile);
     in = my_pcap_open_offline(pcapfile);
     if (filterstr) {
         struct bpf_program fp;
@@ -96,8 +98,6 @@ main(int argc, char *argv[])
 	/* read file names from stdin */
 	while (NULL != fgets(buf, 512, stdin)) {
 		strtok(buf, "\r\n");
-		if (verbose > 0)
-			fprintf(stderr, "%s: %s\n", progname, buf);
 		join(buf);
 	}
     } else for (i = 0; i < argc; i++) {
@@ -140,8 +140,6 @@ main(int argc, char *argv[])
 		closedir(d);
 		qsort(paths, filecnt, sizeof(char *), qsort_strcmp);
 		for (k = 0; k < filecnt; k++) {
-			if (verbose > 0)
-				fprintf(stderr, "Joining %s\n", *(paths+k));
 			join(*(paths+k));
 			free(*(paths+k));
 		}
