@@ -64,7 +64,12 @@ qsort_strcmp(const void *a, const void *b)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: pcap-join pcapfiles ...\n       pcap-join directory\n       pcap-join\t(read files from stdin)\n");
+	fprintf(stderr, "usage: pcap-join [options] pcapfiles ...\n");
+	fprintf(stderr, "       pcap-join [options] directory\n");
+	fprintf(stderr, "       pcap-join [options] (reads files from stdin)\n");
+	fprintf(stderr, "options:\n");
+	fprintf(stderr, "       -v           verbose\n");
+	fprintf(stderr, "       -b filter    apply pcap filter\n");
 	exit(1);
 }
 
