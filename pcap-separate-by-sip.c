@@ -35,32 +35,38 @@
 typedef struct _dlink_node dlink_node;
 typedef struct _dlink_list dlink_list;
 
-struct _dlink_node {
+struct _dlink_node
+{
     void *data;
     dlink_node *prev;
     dlink_node *next;
 };
 
-struct _dlink_list {
+struct _dlink_list
+{
     dlink_node *head;
     dlink_node *tail;
 };
 
-struct _packet {
+struct _packet
+{
     struct pcap_pkthdr hdr;
     void *data;
     struct _packet *next;
 };
 
-struct inx_addr {
+struct inx_addr
+{
     uint8_t family;
-    union {
+    union
+    {
 	struct in_addr in4;
 	struct in6_addr in6;
-    }     u;
+    } u;
 };
 
-struct _client {
+struct _client
+{
     struct inx_addr addr;
     struct _packet *pkthead;
     struct _packet **pkttail;
@@ -145,7 +151,7 @@ void
 mksubdir(const char *path)
 {
     char *t;
-    for (t = (char *)path; *t; t++) {
+    for (t = (char *) path; *t; t++) {
 	if ('/' == *t) {
 	    *t = '\0';
 	    if (mkdir(path, 0755) < 0 && EEXIST != errno) {
@@ -176,8 +182,7 @@ output_fname(const struct _client *f)
     l += snprintf(&fname[l], sizeof(fname) - l, "%s", aname);
     if (!input_sorted)
 	l += snprintf(&fname[l], sizeof(fname) - l, "/%lu.%06lu",
-	    (long unsigned int)f->pkthead->hdr.ts.tv_sec,
-	    (long unsigned int)f->pkthead->hdr.ts.tv_usec);
+	    (long unsigned int) f->pkthead->hdr.ts.tv_sec, (long unsigned int) f->pkthead->hdr.ts.tv_usec);
     l += snprintf(&fname[l], sizeof(fname) - l, "%s", ".pcap");
     assert(l < sizeof(fname));
     return fname;
@@ -234,7 +239,7 @@ clt_pcap_write(struct _client *f)
     if (0 == f->npackets)
 	return;
     for (p = f->pkthead; p; p = p->next)
-	pcap_dump((void *)f->fd, &p->hdr, p->data);
+	pcap_dump((void *) f->fd, &p->hdr, p->data);
     clt_free_packets(f);
 }
 
@@ -377,12 +382,7 @@ print_stats(struct timeval ts, uint64_t pkt_count)
     struct timeval now;
     gettimeofday(&now, NULL);
     fprintf(stderr, "%ld.%03ld: at %ld, %12" PRIu64 " pkts, %9d clts, %4d files\n",
-	(long)now.tv_sec,
-	(long)now.tv_usec / 1000,
-	(long)ts.tv_sec,
-	pkt_count,
-	nclts,
-	nopen);
+	(long) now.tv_sec, (long) now.tv_usec / 1000, (long) ts.tv_sec, pkt_count, nclts, nopen);
 }
 
 int
@@ -417,13 +417,13 @@ is_rfc1918(struct inx_addr a)
     if (AF_INET != a.family)
 	return 0;
     //10 / 8
-	if ((clt_addr & 0xff000000) == 0x0A000000)
+    if ((clt_addr & 0xff000000) == 0x0A000000)
 	return 1;
     //172.16 / 12
-	if ((clt_addr & 0xfff00000) == 0xAC100000)
+    if ((clt_addr & 0xfff00000) == 0xAC100000)
 	return 1;
     //192.168 / 16
-	if ((clt_addr & 0xffff0000) == 0xC0A80000)
+    if ((clt_addr & 0xffff0000) == 0xC0A80000)
 	return 1;
 
     return 0;
@@ -454,7 +454,7 @@ main(int argc, char *argv[])
     assert(LRU);
 
     //Process command line
-	while ((ch = getopt(argc, argv, "bf:lsm")) != -1) {
+    while ((ch = getopt(argc, argv, "bf:lsm")) != -1) {
 	switch (ch) {
 	case 'b':
 	    skip_bogon = 1;
@@ -487,26 +487,24 @@ main(int argc, char *argv[])
 
     if (NULL != filterfile) {
 	//If a filter file was given, read it and prepare
-	    if ((FP = fopen(filterfile, "r")) == NULL) {
-	    fprintf(stderr, "Can't read filter file %s, aborting\n",
-		filterfile);
+	if ((FP = fopen(filterfile, "r")) == NULL) {
+	    fprintf(stderr, "Can't read filter file %s, aborting\n", filterfile);
 	    exit(1);
 	}
-	filterstr = (char *)calloc(1, MAX_FILTER_SZ);
+	filterstr = (char *) calloc(1, MAX_FILTER_SZ);
 	while (fgets(buf, 80, FP)) {
 	    if (strlen(filterstr) > MAX_FILTER_SZ - 12)
 		continue;
 
 	    if (lc != 0)
 		strcpy(or_str, "or");
-	    snprintf(filterstr, MAX_FILTER_SZ, "%s %s src net %s",
-		filterstr, or_str, buf);
+	    snprintf(filterstr, MAX_FILTER_SZ, "%s %s src net %s", filterstr, or_str, buf);
 	    ++lc;
 	}
 	fclose(FP);
 
 	//For debugging purporses, write the filter
-	    FILE * filter_fp = fopen("filter_pcap.dat", "w");
+	FILE *filter_fp = fopen("filter_pcap.dat", "w");
 	if (NULL == filter_fp)
 	    fprintf(stderr, "Can't write filter, skipping\n");
 	else {
@@ -520,7 +518,7 @@ main(int argc, char *argv[])
 	exit(1);
     }
     //Set the filter
-	if (NULL != filterstr) {
+    if (NULL != filterstr) {
 	memset(&fp, '\0', sizeof(fp));
 	if (pcap_compile(in, &fp, filterstr, 1, 0) < 0) {
 	    fprintf(stderr, "pcap_compile failed: %s\n", pcap_geterr(in));

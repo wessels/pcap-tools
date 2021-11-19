@@ -27,12 +27,12 @@ char *progname = NULL;
 
 
 int
-needs_fixing(const struct pcap_pkthdr *hdr, const u_char *data)
+needs_fixing(const struct pcap_pkthdr *hdr, const u_char * data)
 {
-    struct ether_header *e = (struct ether_header *)data;
+    struct ether_header *e = (struct ether_header *) data;
     unsigned short etype;
     if (hdr->caplen < ETHER_HDR_LEN)
-        return 0;
+	return 0;
     etype = nptohs(&e->ether_type);
     if (ETHERTYPE_8021Q == etype)
 	return 1;
@@ -40,18 +40,18 @@ needs_fixing(const struct pcap_pkthdr *hdr, const u_char *data)
 }
 
 void
-fix(struct pcap_pkthdr *hdr, u_char **data)
+fix(struct pcap_pkthdr *hdr, u_char ** data)
 {
-	hdr->len -= 4;
-	hdr->caplen -= 4;
-	*data += 4;
+    hdr->len -= 4;
+    hdr->caplen -= 4;
+    *data += 4;
 }
 
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s pcapfiles ...\n", progname);
-	exit(1);
+    fprintf(stderr, "usage: %s pcapfiles ...\n", progname);
+    exit(1);
 }
 
 int
@@ -91,10 +91,9 @@ main(int argc, char *argv[])
 		nfixed++;
 		if (dryrun)
 		    warnx("found bad packet of at %10lld.%06lld",
-			(long long int) hdr.ts.tv_sec,
-			(long long int) hdr.ts.tv_usec);
+			(long long int) hdr.ts.tv_sec, (long long int) hdr.ts.tv_usec);
 		else
-		    fix(&hdr, (u_char **) &data);
+		    fix(&hdr, (u_char **) & data);
 	    }
 	    if (!out) {
 		out = pcap_dump_open(in, "-");
@@ -103,7 +102,7 @@ main(int argc, char *argv[])
 		    exit(1);
 		}
 	    }
-	    pcap_dump((void *)out, &hdr, data);
+	    pcap_dump((void *) out, &hdr, data);
 	}
 	my_pcap_close_offline(in);
     }
@@ -114,7 +113,7 @@ main(int argc, char *argv[])
 }
 
 int
-is_bogus(struct pcap_pkthdr *thishdr, const u_char *thisdata)
+is_bogus(struct pcap_pkthdr *thishdr, const u_char * thisdata)
 {
     if (thishdr->caplen > 65535)
 	return 1;

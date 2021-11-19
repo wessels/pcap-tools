@@ -38,7 +38,7 @@ main(int argc, char *argv[])
     }
     while ((data = pcap_next(in, &hdr))) {
 	if (hdr.ts.tv_sec >= beg && hdr.ts.tv_sec <= end)
-	    pcap_dump((void *)out, &hdr, data);
+	    pcap_dump((void *) out, &hdr, data);
     }
     pcap_close(in);
     pcap_dump_close(out);

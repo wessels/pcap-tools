@@ -76,15 +76,14 @@ main(int argc, char *argv[])
     callback_ipv4 = my_ip4_handler;
     callback_ipv6 = my_ip6_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    out_hdr.ts = hdr.ts;
-	    out_hdr.len = 0;
-	    out_hdr.caplen = 0;
-	    handle_pcap(NULL, &hdr, data);
-	    if (out_hdr.len)
-		pcap_dump((void *)out, &out_hdr, out_data);
+	out_hdr.ts = hdr.ts;
+	out_hdr.len = 0;
+	out_hdr.caplen = 0;
+	handle_pcap(NULL, &hdr, data);
+	if (out_hdr.len)
+	    pcap_dump((void *) out, &out_hdr, out_data);
     }
     my_pcap_close_offline(in);
     pcap_dump_close(out);
     exit(0);
 }
-

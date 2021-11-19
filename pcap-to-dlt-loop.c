@@ -28,7 +28,7 @@ int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
 {
     out_hdr.len = out_hdr.caplen = len + 4;
-    out_data = (void*) ip4 - 4;
+    out_data = (void *) ip4 - 4;
     htonpl(out_data, AF_INET);
     return 0;
 }
@@ -37,7 +37,7 @@ int
 my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
     out_hdr.len = out_hdr.caplen = len + 4;
-    out_data = (void*) ip6 - 4;
+    out_data = (void *) ip6 - 4;
     htonpl(out_data, AF_INET6);
     return 0;
 }
@@ -72,16 +72,15 @@ main(int argc, char *argv[])
     callback_ipv4 = my_ip4_handler;
     callback_ipv6 = my_ip6_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    out_hdr.ts = hdr.ts;
-	    out_hdr.len = 0;
-	    out_hdr.caplen = 0;
-	    out_data = NULL;
-	    handle_pcap(NULL, &hdr, data);
-	    if (out_data && out_hdr.len)
-		pcap_dump((void *)out, &out_hdr, out_data);
+	out_hdr.ts = hdr.ts;
+	out_hdr.len = 0;
+	out_hdr.caplen = 0;
+	out_data = NULL;
+	handle_pcap(NULL, &hdr, data);
+	if (out_data && out_hdr.len)
+	    pcap_dump((void *) out, &out_hdr, out_data);
     }
     my_pcap_close_offline(in);
     pcap_dump_close(out);
     exit(0);
 }
-

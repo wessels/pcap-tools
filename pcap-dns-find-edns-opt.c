@@ -25,12 +25,12 @@ unsigned int only_option_code = 0;
 unsigned int verbose = 0;
 
 int
-my_dns_handler(const u_char *buf, int len, void *userdata)
+my_dns_handler(const u_char * buf, int len, void *userdata)
 {
     int *flag = userdata;
     ldns_pkt *pkt = 0;
     if (LDNS_STATUS_OK != ldns_wire2pkt(&pkt, buf, len))
-        goto done;
+	goto done;
 
     ldns_rdf *opt = ldns_pkt_edns_data(pkt);
     if (0 == opt)
@@ -41,21 +41,21 @@ my_dns_handler(const u_char *buf, int len, void *userdata)
     unsigned char *rdata = ldns_rdf_data(opt);
     while (rdata_len >= 4) {
 	unsigned short option_code = nptohs(rdata);
-	unsigned short option_len = nptohs(rdata+2);
-        if (only_option_code == 0 || only_option_code == option_code) {
+	unsigned short option_len = nptohs(rdata + 2);
+	if (only_option_code == 0 || only_option_code == option_code) {
 	    *flag = 1;
 	    if (verbose)
-	        fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
-        }
-        rdata_len -= 4;
+		fprintf(stderr, "Found EDNS option %hu of %hu bytes\n", option_code, option_len);
+	}
+	rdata_len -= 4;
 	rdata += 4;
-        if (option_len > rdata_len)
-		goto done;
-        rdata_len -= option_len;
+	if (option_len > rdata_len)
+	    goto done;
+	rdata_len -= option_len;
 	rdata += option_len;
     }
 
-done:
+  done:
     ldns_pkt_free(pkt);
     return 0;
 }
@@ -72,13 +72,13 @@ main(int argc, char *argv[])
     progname = strdup(argv[0]);
 
     while ((flag = getopt(argc, argv, "o:v")) != -1) {
-        switch(flag) {
+	switch (flag) {
 	case 'o':
-		only_option_code = strtoul(optarg, 0, 0);
-		break;
+	    only_option_code = strtoul(optarg, 0, 0);
+	    break;
 	case 'v':
-		verbose++;
-		break;
+	    verbose++;
+	    break;
 	}
     }
     argc -= optind;
@@ -91,13 +91,12 @@ main(int argc, char *argv[])
     pcap_layers_init(pcap_datalink(in), 0);
     callback_l7 = my_dns_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    flag = 0;
-	    handle_pcap((u_char *)&flag, &hdr, data);
-	    if (flag)
-		pcap_dump((void *)out, &hdr, data);
+	flag = 0;
+	handle_pcap((u_char *) & flag, &hdr, data);
+	if (flag)
+	    pcap_dump((void *) out, &hdr, data);
     }
     pcap_close(in);
     pcap_dump_close(out);
     exit(0);
 }
-

@@ -14,7 +14,7 @@
 char *progname = NULL;
 
 int
-needs_fixing(const struct pcap_pkthdr *hdr, const u_char *data)
+needs_fixing(const struct pcap_pkthdr *hdr, const u_char * data)
 {
     unsigned int family;
     if (hdr->caplen < 4)
@@ -26,7 +26,7 @@ needs_fixing(const struct pcap_pkthdr *hdr, const u_char *data)
 }
 
 void
-fix(const u_char *data)
+fix(const u_char * data)
 {
     unsigned int family = htonl(28);
     memcpy((void *) data, &family, sizeof(family));
@@ -35,8 +35,8 @@ fix(const u_char *data)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s pcapfiles ...\n", progname);
-	exit(1);
+    fprintf(stderr, "usage: %s pcapfiles ...\n", progname);
+    exit(1);
 }
 
 int
@@ -76,8 +76,7 @@ main(int argc, char *argv[])
 		nfixed++;
 		if (dryrun)
 		    warnx("found bad packet of at %10lld.%06lld",
-			(long long int) hdr.ts.tv_sec,
-			(long long int) hdr.ts.tv_usec);
+			(long long int) hdr.ts.tv_sec, (long long int) hdr.ts.tv_usec);
 		else
 		    fix(data);
 	    }
@@ -88,7 +87,7 @@ main(int argc, char *argv[])
 		    exit(1);
 		}
 	    }
-	    pcap_dump((void *)out, &hdr, data);
+	    pcap_dump((void *) out, &hdr, data);
 	}
 	my_pcap_close_offline(in);
     }
@@ -99,7 +98,7 @@ main(int argc, char *argv[])
 }
 
 int
-is_bogus(struct pcap_pkthdr *thishdr, const u_char *thisdata)
+is_bogus(struct pcap_pkthdr *thishdr, const u_char * thisdata)
 {
     if (thishdr->caplen > 65535)
 	return 1;

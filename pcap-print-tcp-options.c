@@ -26,17 +26,20 @@
 #endif
 
 
-struct inx_addr {
-	uint8_t family;
-	union {
-		struct in_addr in4;
-		struct in6_addr in6;
-	} u;
+struct inx_addr
+{
+    uint8_t family;
+    union
+    {
+	struct in_addr in4;
+	struct in6_addr in6;
+    } u;
 };
 
-struct state {
-	struct inx_addr src;
-	struct inx_addr dst;
+struct state
+{
+    struct inx_addr src;
+    struct inx_addr dst;
 };
 
 
@@ -45,63 +48,56 @@ static pcap_t *in = NULL;
 int
 my_tcp_handler(const struct tcphdr *tcp, int len, void *userdata)
 {
-	struct state *s = userdata;
-	char sbuf[128];
-	char dbuf[128];
-	unsigned int doff;
-	char sep = '\t';
-	inet_ntop(s->src.family, &s->src.u, sbuf, sizeof(sbuf));
-	inet_ntop(s->dst.family, &s->dst.u, dbuf, sizeof(dbuf));
-	printf("%-30s %-30s %c%c%c%c%c%c",
-		sbuf, dbuf,
-#ifdef TH_FIN
-		/* BSD */
-		tcp->th_flags & TH_URG ? 'U' : '.',
-		tcp->th_flags & TH_ACK ? 'A' : '.',
-		tcp->th_flags & TH_PUSH ? 'P' : '.',
-		tcp->th_flags & TH_RST ? 'R' : '.',
-		tcp->th_flags & TH_SYN ? 'S' : '.',
-		tcp->th_flags & TH_FIN ? 'F' : '.'
-#else
-		/* Linux */
-		tcp->urg ? 'U' : '.',
-		tcp->ack ? 'A' : '.',
-		tcp->psh ? 'P' : '.',
-		tcp->rst ? 'R' : '.',
-		tcp->syn ? 'S' : '.',
-		tcp->fin ? 'F' : '.'
-#endif
-);
+    struct state *s = userdata;
+    char sbuf[128];
+    char dbuf[128];
+    unsigned int doff;
+    char sep = '\t';
+    inet_ntop(s->src.family, &s->src.u, sbuf, sizeof(sbuf));
+    inet_ntop(s->dst.family, &s->dst.u, dbuf, sizeof(dbuf));
+    printf("%-30s %-30s %c%c%c%c%c%c", sbuf, dbuf,
 #ifdef TH_FIN
 	/* BSD */
-	doff = tcp->th_off << 2;
+	tcp->th_flags & TH_URG ? 'U' : '.',
+	tcp->th_flags & TH_ACK ? 'A' : '.',
+	tcp->th_flags & TH_PUSH ? 'P' : '.',
+	tcp->th_flags & TH_RST ? 'R' : '.', tcp->th_flags & TH_SYN ? 'S' : '.', tcp->th_flags & TH_FIN ? 'F' : '.'
 #else
 	/* Linux */
-	doff = tcp->doff << 2;
+	tcp->urg ? 'U' : '.',
+	tcp->ack ? 'A' : '.', tcp->psh ? 'P' : '.', tcp->rst ? 'R' : '.', tcp->syn ? 'S' : '.', tcp->fin ? 'F' : '.'
 #endif
-	if (doff > sizeof(*tcp)) {
-		unsigned int hdrlen = doff - sizeof(*tcp);
-		uint8_t *x = (uint8_t *) (tcp + 1);
-		uint8_t optlen;
-		while (hdrlen > 0) {
-			uint8_t opt = *x;
-			printf ("%copt%u", sep, opt);
-			if (0 == opt || 1 == opt) {
-				optlen = 1;
-			} else {
-				if (hdrlen < 2)
-					break;
-				optlen = *(x+1);
-				if (optlen < 2 || optlen > hdrlen)
-					break;
-			}
-			x += optlen;
-			hdrlen -= optlen;
-			sep = ',';
-		}
+	);
+#ifdef TH_FIN
+    /* BSD */
+    doff = tcp->th_off << 2;
+#else
+    /* Linux */
+    doff = tcp->doff << 2;
+#endif
+    if (doff > sizeof(*tcp)) {
+	unsigned int hdrlen = doff - sizeof(*tcp);
+	uint8_t *x = (uint8_t *) (tcp + 1);
+	uint8_t optlen;
+	while (hdrlen > 0) {
+	    uint8_t opt = *x;
+	    printf("%copt%u", sep, opt);
+	    if (0 == opt || 1 == opt) {
+		optlen = 1;
+	    } else {
+		if (hdrlen < 2)
+		    break;
+		optlen = *(x + 1);
+		if (optlen < 2 || optlen > hdrlen)
+		    break;
+	    }
+	    x += optlen;
+	    hdrlen -= optlen;
+	    sep = ',';
 	}
-	printf("\n");
-	return 0;
+    }
+    printf("\n");
+    return 0;
 }
 
 

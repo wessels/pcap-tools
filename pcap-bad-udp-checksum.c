@@ -19,12 +19,13 @@
 
 const char *progname;
 
-struct state {
-	inx_addr src;
-	inx_addr dst;
-        int proto;
-	int frag;
-	int cksum_bad;
+struct state
+{
+    inx_addr src;
+    inx_addr dst;
+    int proto;
+    int frag;
+    int cksum_bad;
 };
 
 unsigned short
@@ -66,11 +67,11 @@ my_udp_handler(const struct udphdr *udp, int len, void *userdata)
 #endif
     memset(&pseudo[0], 0, sizeof(pseudo));
     if (4 == inx_addr_version(&s->src)) {
-        memcpy(&pseudo[0], &s->src._.in4, 4);
-        memcpy(&pseudo[8], &s->dst._.in4, 4);
+	memcpy(&pseudo[0], &s->src._.in4, 4);
+	memcpy(&pseudo[8], &s->dst._.in4, 4);
     } else if (6 == inx_addr_version(&s->src)) {
-        memcpy(&pseudo[0], &s->src.in6, 16);
-        memcpy(&pseudo[8], &s->dst.in6, 16);
+	memcpy(&pseudo[0], &s->src.in6, 16);
+	memcpy(&pseudo[8], &s->dst.in6, 16);
     }
     pseudo[16] = htons(IPPROTO_UDP);
     pseudo[17] = htons((unsigned short) len);
@@ -93,7 +94,7 @@ my_ip4_handler(const struct ip *ip4, int len, void *userdata)
     inx_addr_assign_v4(&s->src, &ip4->ip_src);
     inx_addr_assign_v4(&s->dst, &ip4->ip_dst);
     if ((ip_off & IP_MF) || 0 != (ip_off & IP_OFFMASK))
-        s->frag = 1;
+	s->frag = 1;
     return 0;
 }
 
@@ -137,13 +138,12 @@ main(int argc, char *argv[])
     callback_ipv6 = my_ip6_handler;
     callback_udp = my_udp_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    memset(&S, 0, sizeof(S));
-	    handle_pcap((u_char *)&S, &hdr, data);
-	    if (17 == S.proto && 1 == S.cksum_bad)
-		pcap_dump((void *)out, &hdr, data);
+	memset(&S, 0, sizeof(S));
+	handle_pcap((u_char *) & S, &hdr, data);
+	if (17 == S.proto && 1 == S.cksum_bad)
+	    pcap_dump((void *) out, &hdr, data);
     }
     pcap_close(in);
     pcap_dump_close(out);
     exit(0);
 }
-

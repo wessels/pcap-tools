@@ -114,7 +114,7 @@ inx_addr_hash(inx_addr a)
 }
 
 unsigned int
-tuple_hash(tuple *t)
+tuple_hash(tuple * t)
 {
     return (inx_addr_hash(t->sip) + inx_addr_hash(t->dip) + t->sport + t->dport) % HASH_SIZE;
 }
@@ -130,17 +130,13 @@ inx_addr_equal(inx_addr a, inx_addr b)
 }
 
 int
-tuple_equal(tuple *a, tuple *b)
+tuple_equal(tuple * a, tuple * b)
 {
     if ((a->sport == b->sport) &&
-	(a->dport == b->dport) &&
-	inx_addr_equal(a->sip, b->sip) &&
-	inx_addr_equal(a->dip, b->dip))
+	(a->dport == b->dport) && inx_addr_equal(a->sip, b->sip) && inx_addr_equal(a->dip, b->dip))
 	return 1;
     if ((a->sport == b->dport) &&
-	(a->dport == b->sport) &&
-	inx_addr_equal(a->sip, b->dip) &&
-	inx_addr_equal(a->dip, b->sip))
+	(a->dport == b->sport) && inx_addr_equal(a->sip, b->dip) && inx_addr_equal(a->dip, b->sip))
 	return 1;
     return 0;
 }
@@ -173,7 +169,7 @@ dlinkDelete(dlink_node * m, dlink_list * list)
 }
 
 void
-hashDelete(conn *f)
+hashDelete(conn * f)
 {
     unsigned int i = tuple_hash(&f->tuple);
     conn **F;
@@ -201,7 +197,7 @@ mksubdir(const char *path)
 }
 
 const char *
-output_fname(const conn *f)
+output_fname(const conn * f)
 {
     static char fname[768];
     static char src_s[128];
@@ -214,17 +210,13 @@ output_fname(const conn *f)
 	f->tuple.sport,
 	dst_s,
 	src_s,
-	f->tuple.sport,
-	dst_s,
-	f->tuple.dport,
-	f->pkthead->hdr.ts.tv_sec,
-	(unsigned long) f->pkthead->hdr.ts.tv_usec);
+	f->tuple.sport, dst_s, f->tuple.dport, f->pkthead->hdr.ts.tv_sec, (unsigned long) f->pkthead->hdr.ts.tv_usec);
     return fname;
 }
 
 
 void
-conn_pcap_open(conn *f)
+conn_pcap_open(conn * f)
 {
     const char *file;
     if (NULL != f->fd)
@@ -244,7 +236,7 @@ conn_pcap_open(conn *f)
 
 
 void
-conn_free_packets(conn *f)
+conn_free_packets(conn * f)
 {
     packet *p;
     packet *n;
@@ -260,7 +252,7 @@ conn_free_packets(conn *f)
 }
 
 void
-conn_pcap_write(conn *f)
+conn_pcap_write(conn * f)
 {
     packet *p;
     if (0 == f->npackets)
@@ -273,7 +265,7 @@ conn_pcap_write(conn *f)
 }
 
 void
-conn_pcap_close(conn *f)
+conn_pcap_close(conn * f)
 {
     if (NULL == f->fd)
 	return;
@@ -283,7 +275,7 @@ conn_pcap_close(conn *f)
 }
 
 void
-conn_free(conn *f)
+conn_free(conn * f)
 {
     if (f->npackets)
 	conn_free_packets(f);
@@ -313,7 +305,7 @@ close_lru(void)
 }
 
 void
-flush(conn *f)
+flush(conn * f)
 {
     if (nopen >= LIMIT_OPEN_FD)
 	close_lru();
@@ -358,7 +350,7 @@ flushall()
 }
 
 void
-stash2(conn *f, struct pcap_pkthdr *hdr, const unsigned char *data)
+stash2(conn * f, struct pcap_pkthdr *hdr, const unsigned char *data)
 {
     packet *p = calloc(1, sizeof(*p));
     assert(p);
@@ -373,7 +365,7 @@ stash2(conn *f, struct pcap_pkthdr *hdr, const unsigned char *data)
 }
 
 void
-stash(tuple *t, struct pcap_pkthdr *hdr, const unsigned char *data)
+stash(tuple * t, struct pcap_pkthdr *hdr, const unsigned char *data)
 {
     conn **F;
     conn *f;
@@ -406,8 +398,10 @@ print_stats(struct timeval ts)
 {
     struct timeval now;
     gettimeofday(&now, NULL);
-    fprintf(stderr, "%ld.%03ld: at %ld, %12" PRIu64 " read, %12" PRIu64 " stashed, %12" PRIu64 " writ, %9d conns, %4d files\n",
-	(long) now.tv_sec, (long) now.tv_usec / 1000, (long) ts.tv_sec, pkts_read, pkts_stashed, pkts_writ, nconn, nopen);
+    fprintf(stderr,
+	"%ld.%03ld: at %ld, %12" PRIu64 " read, %12" PRIu64 " stashed, %12" PRIu64 " writ, %9d conns, %4d files\n",
+	(long) now.tv_sec, (long) now.tv_usec / 1000, (long) ts.tv_sec, pkts_read, pkts_stashed, pkts_writ, nconn,
+	nopen);
 }
 
 int

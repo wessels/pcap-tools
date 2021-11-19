@@ -47,14 +47,14 @@ my_ip6_af_setter(const struct ip6_hdr *ip6, int len, void *userdata)
 int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
 {
-    *((int *)userdata) = ntohl(ip4->ip_src.s_addr) >> (theLevel << 3) & 0xFF;
+    *((int *) userdata) = ntohl(ip4->ip_src.s_addr) >> (theLevel << 3) & 0xFF;
     return 0;
 }
 
 int
 my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
-    *((int *)userdata) = ip6->ip6_src.s6_addr[15 - theLevel];
+    *((int *) userdata) = ip6->ip6_src.s6_addr[15 - theLevel];
     return 0;
 }
 
@@ -63,11 +63,11 @@ cleanup(int sig)
 {
     int i;
     char cmd[256];
-    for (i=0; i<16; i++) {
+    for (i = 0; i < 16; i++) {
 	if ('\0' == tmpdirs[i][0])
-		continue;
+	    continue;
 	snprintf(cmd, sizeof(cmd), "/bin/rm -r %s", tmpdirs[i]);
-	system (cmd);
+	system(cmd);
     }
     exit(1);
 }
@@ -101,7 +101,7 @@ pcap_sort(const char *inf, const char *outf, int level)
     if (NULL == dir)
 	errx(1, "%s", tmpdirs[level]);
     theLevel = level;
-    /*fprintf(stderr, "Sorting '%s' at level %d\n", inf, theLevel);*/
+    /*fprintf(stderr, "Sorting '%s' at level %d\n", inf, theLevel); */
     fprintf(stderr, "\r%c", twhiler[tc++ & 3]);
     in = my_pcap_open_offline(inf);
     pcap_layers_init(pcap_datalink(in), 0);
@@ -109,14 +109,14 @@ pcap_sort(const char *inf, const char *outf, int level)
     callback_ipv6 = my_ip6_handler;
     while ((data = pcap_next(in, &hdr))) {
 	int which = -1;
-	handle_pcap((void *)&which, &hdr, data);
+	handle_pcap((void *) &which, &hdr, data);
 	assert(which != -1);
 	if (NULL == out[which]) {
 	    char tf[128];
 	    snprintf(tf, 128, "%s/%d.%03d.tmp", dir, getpid(), which);
 	    out[which] = my_pcap_dump_open(in, tf);
 	}
-	pcap_dump((void *)out[which], &hdr, data);
+	pcap_dump((void *) out[which], &hdr, data);
     }
     for (i = 0; i < N_SPLIT; i++)
 	if (out[i])
@@ -135,7 +135,7 @@ pcap_sort(const char *inf, const char *outf, int level)
 	    pcap_sort(tf, tf, level - 1);
 	in = my_pcap_open_offline(tf);
 	while ((data = pcap_next(in, &hdr)))
-	    pcap_dump((void *)pcap_out, &hdr, data);
+	    pcap_dump((void *) pcap_out, &hdr, data);
 	my_pcap_close_offline(in);
 	if (0 != unlink(tf))
 	    warn("unlink: %s", tf);
@@ -168,7 +168,7 @@ spawn(int level, pcap_t * other, int *rfd)
 	    errx(1, "dup2");
 	stdin = fdopen(0, "r");	/* Because pcap uses stdio!! */
 	stdout = fdopen(1, "w");
-	for (i=3; i<10; i++)
+	for (i = 3; i < 10; i++)
 	    close(i);
 	pcap_sort("-", "-", level);
 	exit(0);
@@ -189,7 +189,7 @@ spawn(int level, pcap_t * other, int *rfd)
 }
 
 uint64_t
-pcap_copy_fd_to_dump(int fd, pcap_dumper_t *out)
+pcap_copy_fd_to_dump(int fd, pcap_dumper_t * out)
 {
     uint64_t count = 0;
     char errbuf[PCAP_ERRBUF_SIZE + 1];
@@ -239,7 +239,7 @@ pcap_sort_by_af_spawn(const char *inf, const char *outf)
     callback_ipv6 = my_ip6_af_setter;
     while ((data = pcap_next(in, &hdr))) {
 	sa_family_t fam = AF_UNSPEC;
-	handle_pcap((void *)&fam, &hdr, data);
+	handle_pcap((void *) &fam, &hdr, data);
 	switch (fam) {
 	case AF_INET:
 	    pcap_dump((u_char *) v4dump, &hdr, data);
@@ -260,9 +260,8 @@ pcap_sort_by_af_spawn(const char *inf, const char *outf)
     v6sorted = pcap_copy_fd_to_dump(v6rfd, out);
     gettimeofday(&stop, NULL);
     timersub(&stop, &start, &duration);
-    fprintf(stderr, "\nSorted %"PRIu64" IPv4 and %"PRIu64" IPv6 packets in %d.%d seconds\n",
-	v4sorted, v6sorted,
-	(int) duration.tv_sec, (int) duration.tv_usec / 100000);
+    fprintf(stderr, "\nSorted %" PRIu64 " IPv4 and %" PRIu64 " IPv6 packets in %d.%d seconds\n",
+	v4sorted, v6sorted, (int) duration.tv_sec, (int) duration.tv_usec / 100000);
     exit(0);
 }
 

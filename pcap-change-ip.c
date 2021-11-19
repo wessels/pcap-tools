@@ -32,7 +32,7 @@ struct in6_addr to6;
 int
 match4(struct in_addr check)
 {
-     if ((check.s_addr & mask4.s_addr) != old4.s_addr)
+    if ((check.s_addr & mask4.s_addr) != old4.s_addr)
 	return 0;
     return 1;
 }
@@ -54,9 +54,9 @@ int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
 {
     if (match4(ip4->ip_src))
-    	memcpy((void*) &ip4->ip_src, &to4, sizeof(to4));
+	memcpy((void *) &ip4->ip_src, &to4, sizeof(to4));
     if (match4(ip4->ip_dst))
-    	memcpy((void*) &ip4->ip_dst, &to4, sizeof(to4));
+	memcpy((void *) &ip4->ip_dst, &to4, sizeof(to4));
     return 0;
 }
 
@@ -64,17 +64,17 @@ int
 my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
     if (match6(ip6->ip6_src))
-    	memcpy((void*) &ip6->ip6_src, &to6, sizeof(to6));
+	memcpy((void *) &ip6->ip6_src, &to6, sizeof(to6));
     if (match6(ip6->ip6_dst))
-    	memcpy((void*) &ip6->ip6_dst, &to6, sizeof(to6));
+	memcpy((void *) &ip6->ip6_dst, &to6, sizeof(to6));
     return 0;
 }
 
 void
 usage(void)
 {
-	fprintf(stderr, "usage: pcap-change-ip from-ip4/prefixlen new-ip4 from-ip6/prefixlen new-ip6\n");
-	exit(1);
+    fprintf(stderr, "usage: pcap-change-ip from-ip4/prefixlen new-ip4 from-ip6/prefixlen new-ip6\n");
+    exit(1);
 }
 
 int
@@ -99,12 +99,12 @@ main(int argc, char *argv[])
 	fprintf(stderr, "bad IPv4 address: %s\n", argv[1]);
 	usage();
     }
-    ml = atoi(t+1);
+    ml = atoi(t + 1);
     if (ml > 32) {
 	fprintf(stderr, "IPv4 prefixlen (%u) out of range\n", ml);
 	usage();
     }
-    mask4.s_addr = htonl(~0 << (32-ml));
+    mask4.s_addr = htonl(~0 << (32 - ml));
     if (inet_pton(AF_INET, argv[2], &to4) != 1) {
 	fprintf(stderr, "bad IPv4 address: %s\n", argv[2]);
 	usage();
@@ -116,7 +116,7 @@ main(int argc, char *argv[])
 	fprintf(stderr, "bad IPv6 address: %s\n", argv[3]);
 	exit(1);
     }
-    ml = atoi(t+1);
+    ml = atoi(t + 1);
     if (ml > 128) {
 	fprintf(stderr, "IPv6 prefixlen (%u) out of range\n", ml);
 	usage();
@@ -124,10 +124,10 @@ main(int argc, char *argv[])
     memset(&mask6, 0, sizeof(mask6));
     for (k = 0; k < 16; k++, ml -= 8) {
 	if (ml >= 8) {
-		mask6.s6_addr[k] = 0xff;
+	    mask6.s6_addr[k] = 0xff;
 	} else {
-		mask6.s6_addr[k] = 0xff << (8-ml);
-		break;
+	    mask6.s6_addr[k] = 0xff << (8 - ml);
+	    break;
 	}
     }
     if (inet_pton(AF_INET6, argv[4], &to6) != 1) {
@@ -149,11 +149,10 @@ main(int argc, char *argv[])
     callback_ipv4 = my_ip4_handler;
     callback_ipv6 = my_ip6_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    handle_pcap(NULL, &hdr, data);
-	    pcap_dump((void *)out, &hdr, data);
+	handle_pcap(NULL, &hdr, data);
+	pcap_dump((void *) out, &hdr, data);
     }
     pcap_close(in);
     pcap_dump_close(out);
     exit(0);
 }
-

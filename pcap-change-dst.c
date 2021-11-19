@@ -24,14 +24,14 @@ struct in6_addr dst6;
 int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
 {
-    memcpy((void*) &ip4->ip_dst, &dst4, sizeof(dst4));
+    memcpy((void *) &ip4->ip_dst, &dst4, sizeof(dst4));
     return 0;
 }
 
 int
 my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
-    memcpy((void*) &ip6->ip6_dst, &dst6, sizeof(dst6));
+    memcpy((void *) &ip6->ip6_dst, &dst6, sizeof(dst6));
     return 0;
 }
 
@@ -72,11 +72,10 @@ main(int argc, char *argv[])
     callback_ipv4 = my_ip4_handler;
     callback_ipv6 = my_ip6_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    handle_pcap(NULL, &hdr, data);
-	    pcap_dump((void *)out, &hdr, data);
+	handle_pcap(NULL, &hdr, data);
+	pcap_dump((void *) out, &hdr, data);
     }
     pcap_close(in);
     pcap_dump_close(out);
     exit(0);
 }
-

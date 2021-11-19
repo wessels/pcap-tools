@@ -25,7 +25,7 @@
  * Remove duplicated packets from a pcap file
  */
 
-int is_dupe(struct pcap_pkthdr *thishdr, const u_char *thisdata);
+int is_dupe(struct pcap_pkthdr *thishdr, const u_char * thisdata);
 
 int
 main(int argc, char *argv[])
@@ -55,7 +55,7 @@ main(int argc, char *argv[])
 		    exit(1);
 		}
 	    }
-	    pcap_dump((void *)out, &hdr, data);
+	    pcap_dump((void *) out, &hdr, data);
 	}
 	my_pcap_close_offline(in);
     }
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
 }
 
 int
-is_dupe(struct pcap_pkthdr *thishdr, const u_char *thisdata)
+is_dupe(struct pcap_pkthdr *thishdr, const u_char * thisdata)
 {
     static struct pcap_pkthdr lasthdr;
     static char lastdata[4096];
@@ -79,7 +79,7 @@ is_dupe(struct pcap_pkthdr *thishdr, const u_char *thisdata)
      */
     MD5Init(&md5);
     MD5Update(&md5, thisdata, thishdr->len);
-    MD5Final((u_char*)thisdigest, &md5);
+    MD5Final((u_char *) thisdigest, &md5);
     if (thishdr->ts.tv_usec != lasthdr.ts.tv_usec)
 	(void) 0;
     else if (thishdr->ts.tv_sec != lasthdr.ts.tv_sec)

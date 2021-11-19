@@ -26,17 +26,20 @@
 #endif
 
 
-struct inx_addr {
-	uint8_t family;
-	union {
-		struct in_addr in4;
-		struct in6_addr in6;
-	} u;
+struct inx_addr
+{
+    uint8_t family;
+    union
+    {
+	struct in_addr in4;
+	struct in6_addr in6;
+    } u;
 };
 
-struct state {
-	struct inx_addr a;
-	int proto;
+struct state
+{
+    struct inx_addr a;
+    int proto;
 };
 
 
@@ -45,17 +48,17 @@ static pcap_t *in = NULL;
 int
 my_udp_handler(const struct udphdr *udp, int len, void *userdata)
 {
-	struct state *s = userdata;
-	s->proto = 17;
-	return 0;
+    struct state *s = userdata;
+    s->proto = 17;
+    return 0;
 }
 
 int
 my_tcp_handler(const struct tcphdr *tcp, int len, void *userdata)
 {
-	struct state *s = userdata;
-	s->proto = 6;
-	return 0;
+    struct state *s = userdata;
+    s->proto = 6;
+    return 0;
 }
 
 
@@ -84,14 +87,14 @@ is_rfc1918(struct inx_addr a)
     if (AF_INET != a.family)
 	return 0;
     // 10/8
-    if ( ( clt_addr & 0xff000000) == 0x0A000000 )
-        return 1;
+    if ((clt_addr & 0xff000000) == 0x0A000000)
+	return 1;
     // 172.16/12
-    if ( ( clt_addr & 0xfff00000) == 0xAC100000 )
-        return 1;
+    if ((clt_addr & 0xfff00000) == 0xAC100000)
+	return 1;
     // 192.168/16
-    if ( ( clt_addr & 0xffff0000) == 0xC0A80000 )
-        return 1;
+    if ((clt_addr & 0xffff0000) == 0xC0A80000)
+	return 1;
 
     return 0;
 }
@@ -128,7 +131,7 @@ main(int argc, char *argv[])
 	    continue;
 	inet_ntop(s.a.family, &s.a.u, buf, sizeof(buf));
 	if (s.proto)
-		printf("%s %d\n", buf, s.proto);
+	    printf("%s %d\n", buf, s.proto);
     }
     return 0;
 }

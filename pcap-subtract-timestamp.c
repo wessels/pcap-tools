@@ -19,7 +19,7 @@ main(int argc, char *argv[])
     struct timeval adjust;
     long long int L1;
     long long int L2;
-   
+
 
     if (argc < 2) {
 	fprintf(stderr, "usage: pcap-adjust-timestamp adjust\n");
@@ -35,24 +35,24 @@ main(int argc, char *argv[])
     adjust.tv_usec = (time_t) L2;
     fprintf(stderr, "adjusting timestamps by %lld.%06lld sec\n",
 	(long long int) adjust.tv_sec, (long long int) adjust.tv_usec);
-    
-	in = pcap_open_offline("-", errbuf);
-	if (NULL == in) {
-	    fprintf(stderr, "stdin: %s", errbuf);
-	    exit(1);
-	}
-	out = pcap_dump_open(in, "-");
-	if (NULL == out) {
-	    perror("stdout");
-	    exit(1);
-	}
-	while ((data = pcap_next(in, &hdr))) {
-	    struct timeval result;
-	    timersub(&hdr.ts, &adjust, &result);
-	    hdr.ts = result;
-	    pcap_dump((void *)out, &hdr, data);
-	}
-	pcap_close(in);
+
+    in = pcap_open_offline("-", errbuf);
+    if (NULL == in) {
+	fprintf(stderr, "stdin: %s", errbuf);
+	exit(1);
+    }
+    out = pcap_dump_open(in, "-");
+    if (NULL == out) {
+	perror("stdout");
+	exit(1);
+    }
+    while ((data = pcap_next(in, &hdr))) {
+	struct timeval result;
+	timersub(&hdr.ts, &adjust, &result);
+	hdr.ts = result;
+	pcap_dump((void *) out, &hdr, data);
+    }
+    pcap_close(in);
     if (out)
 	pcap_dump_close(out);
     exit(0);

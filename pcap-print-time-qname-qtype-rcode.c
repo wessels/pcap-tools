@@ -33,7 +33,7 @@ static struct pcap_pkthdr hdr;
 static int include_queries = 0;
 
 int
-my_dns_handler(const u_char *buf, int len, void *userdata)
+my_dns_handler(const u_char * buf, int len, void *userdata)
 {
     ldns_pkt *pkt = 0;
     ldns_rr_list *qd = 0;
@@ -42,26 +42,22 @@ my_dns_handler(const u_char *buf, int len, void *userdata)
     ldns_rr_type qt;
     char *qn_str = 0;
     if (LDNS_STATUS_OK != ldns_wire2pkt(&pkt, buf, len))
-        goto done;
+	goto done;
     if (1 != ldns_pkt_qr(pkt) && !include_queries)
-        goto done;
+	goto done;
     qd = ldns_pkt_question(pkt);
     if (0 == qd)
-        goto done;
+	goto done;
     q = ldns_rr_list_rr(qd, 0);
     if (0 == q)
-        goto done;
+	goto done;
     qn = ldns_rr_owner(q);
     if (0 == qn)
-        goto done;
+	goto done;
     qn_str = ldns_rdf2str(qn);
     qt = ldns_rr_get_type(q);
-    printf ("%10lu.%06lu %s %d %d\n",
-        hdr.ts.tv_sec, hdr.ts.tv_usec,
-        qn_str,
-	qt,
-        ldns_pkt_get_rcode(pkt));
-done:
+    printf("%10lu.%06lu %s %d %d\n", hdr.ts.tv_sec, hdr.ts.tv_usec, qn_str, qt, ldns_pkt_get_rcode(pkt));
+  done:
     ldns_pkt_free(pkt);
     LDNS_FREE(qn_str);
     return 0;
@@ -76,15 +72,15 @@ main(int argc, char *argv[])
     int i;
 
     while ((i = getopt(argc, argv, "q")) != -1) {
-        switch (i) {
-        case 'q':
-            include_queries = 1;
-            break;
-        case '?':
-        default:
-            fprintf(stderr, "usage: %s [-q] < pcap-in\n", argv[0]);
+	switch (i) {
+	case 'q':
+	    include_queries = 1;
+	    break;
+	case '?':
+	default:
+	    fprintf(stderr, "usage: %s [-q] < pcap-in\n", argv[0]);
 	    exit(1);
-        }
+	}
     }
     argc -= optind;
     argv += optind;

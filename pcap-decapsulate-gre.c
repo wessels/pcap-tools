@@ -16,12 +16,13 @@
 
 #include "pcap_layers.h"
 
-struct _state {
-	int from_gre;
-	void *ip_start;
-	int ip_len;
-	void *gre_start;
-	int gre_len;
+struct _state
+{
+    int from_gre;
+    void *ip_start;
+    int ip_len;
+    void *gre_start;
+    int gre_len;
 };
 
 /*
@@ -30,37 +31,37 @@ struct _state {
 int
 my_ip4_handler(const struct ip *ip4, int len, void *userdata)
 {
-	struct _state *s = userdata;
-	if (!s->from_gre) {
-		s->ip_start = (void*) ip4;
-		s->ip_len = len;
-	} else {
-		s->gre_start = (void*) ip4;
-		s->gre_len = len;
-	}
-	return 0;
+    struct _state *s = userdata;
+    if (!s->from_gre) {
+	s->ip_start = (void *) ip4;
+	s->ip_len = len;
+    } else {
+	s->gre_start = (void *) ip4;
+	s->gre_len = len;
+    }
+    return 0;
 }
 
 int
 my_ip6_handler(const struct ip6_hdr *ip6, int len, void *userdata)
 {
-	struct _state *s = userdata;
-	if (!s->from_gre) {
-		s->ip_start = (void*) ip6;
-		s->ip_len = len;
-	} else {
-		s->gre_start = (void*) ip6;
-		s->gre_len = len;
-	}
-	return 0;
+    struct _state *s = userdata;
+    if (!s->from_gre) {
+	s->ip_start = (void *) ip6;
+	s->ip_len = len;
+    } else {
+	s->gre_start = (void *) ip6;
+	s->gre_len = len;
+    }
+    return 0;
 }
 
 int
 my_gre_handler(const unsigned char *pkt, int len, void *userdata)
 {
-	struct _state *s = userdata;
-	s->from_gre = 1;
-	return 0;
+    struct _state *s = userdata;
+    s->from_gre = 1;
+    return 0;
 }
 
 int
@@ -89,18 +90,18 @@ main(int argc, char *argv[])
     callback_ipv6 = my_ip6_handler;
     callback_gre = my_gre_handler;
     while ((data = pcap_next(in, &hdr))) {
-	    memset(&s, 0, sizeof(s));
-	    handle_pcap((void*)&s, &hdr, data);
-	    if (s.from_gre && s.ip_start && s.gre_start && s.ip_start < s.gre_start && s.ip_len && s.gre_len && s.ip_len > s.gre_len) {
-		int chop = (s.gre_start - s.ip_start);
-		hdr.caplen -= chop;
-		hdr.len -= chop;
-		memmove(s.ip_start, s.gre_start, s.gre_len);
-	    	pcap_dump((void *)out, &hdr, data);
-	    }
+	memset(&s, 0, sizeof(s));
+	handle_pcap((void *) &s, &hdr, data);
+	if (s.from_gre && s.ip_start && s.gre_start && s.ip_start < s.gre_start && s.ip_len && s.gre_len
+	    && s.ip_len > s.gre_len) {
+	    int chop = (s.gre_start - s.ip_start);
+	    hdr.caplen -= chop;
+	    hdr.len -= chop;
+	    memmove(s.ip_start, s.gre_start, s.gre_len);
+	    pcap_dump((void *) out, &hdr, data);
+	}
     }
     pcap_close(in);
     pcap_dump_close(out);
     exit(0);
 }
-

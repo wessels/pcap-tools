@@ -18,13 +18,15 @@
 #define XCMP(X,Y) (X<Y?-1:(X>Y?1:0))
 
 int SORTSIZE = 256;
-struct _pkt {
+struct _pkt
+{
     struct pcap_pkthdr hdr;
     u_char *data;
 };
 int npkts = 0;
 struct _pkt *packets;
-struct timeval max_flushed = {0, 0};
+struct timeval max_flushed = { 0, 0 };
+
 int sort_err_fatal = 0;
 
 int
@@ -47,15 +49,15 @@ int
 cmp_timeval(struct timeval a, struct timeval b)
 {
     return (a.tv_sec == b.tv_sec)
-    ? XCMP(a.tv_usec, b.tv_usec)
-    : XCMP(a.tv_sec, b.tv_sec);
+	? XCMP(a.tv_usec, b.tv_usec)
+	: XCMP(a.tv_sec, b.tv_sec);
 }
 
 int
 sorter(const void *A, const void *B)
 {
-    struct _pkt *a = (struct _pkt *)A;
-    struct _pkt *b = (struct _pkt *)B;
+    struct _pkt *a = (struct _pkt *) A;
+    struct _pkt *b = (struct _pkt *) B;
     return cmp_timeval(a->hdr.ts, b->hdr.ts);
 }
 
@@ -67,7 +69,7 @@ flush(pcap_dumper_t * out, int keep)
 	return;
     qsort(packets, npkts, sizeof(struct _pkt), sorter);
     for (i = 0; i < (npkts - keep); i++) {
-	pcap_dump((void *)out, &packets[i].hdr, packets[i].data);
+	pcap_dump((void *) out, &packets[i].hdr, packets[i].data);
 	free(packets[i].data);
     }
     max_flushed = packets[i - 1].hdr.ts;
@@ -90,10 +92,8 @@ push(struct pcap_pkthdr *hdr, const u_char * data)
 	    "to fully sort this file.  "
 	    "flushed=%10lld.%06lld, this=%10lld.%06lld",
 	    SORTSIZE,
-	    (long long int)max_flushed.tv_sec,
-	    (long long int)max_flushed.tv_usec,
-	    (long long int)hdr->ts.tv_sec,
-	    (long long int)hdr->ts.tv_usec);
+	    (long long int) max_flushed.tv_sec,
+	    (long long int) max_flushed.tv_usec, (long long int) hdr->ts.tv_sec, (long long int) hdr->ts.tv_usec);
 	if (sort_err_fatal)
 	    exit(1);
     }
