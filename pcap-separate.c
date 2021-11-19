@@ -21,7 +21,7 @@ read_list(const char *fn, pcap_t *in)
 	FILE *fp = fopen(fn, "r");
 	struct _item **tailp = &List;
 	char buf[512];
-	char ofn[512];
+	char ofn[768];
 	if (NULL == fp) {
 		perror(fn);
 		exit(1);
@@ -30,7 +30,7 @@ read_list(const char *fn, pcap_t *in)
 		struct _item *i = calloc(1, sizeof(*i));
 		strtok(buf, "\r\n");
 		i->addr.s_addr = inet_addr(buf);
-		snprintf(ofn, 512, "%s.pcap", buf);
+		snprintf(ofn, sizeof(ofn), "%s.pcap", buf);
 	    	i->out = pcap_dump_open(in, ofn);
 	        if (NULL == i->out) {
 		    perror(ofn);

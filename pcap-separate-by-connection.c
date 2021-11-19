@@ -203,7 +203,7 @@ mksubdir(const char *path)
 const char *
 output_fname(const conn *f)
 {
-    static char fname[256];
+    static char fname[768];
     static char src_s[128];
     static char dst_s[128];
     inet_ntop(f->tuple.sip.family, &f->tuple.sip.u, src_s, sizeof(src_s));
