@@ -131,18 +131,20 @@ main(int argc, char *argv[])
 		 * read unsorted files
 		 */
 		paths = calloc(filecnt, sizeof(char *));
-		filecnt = 0;
+		k = 0;
 		d = opendir(argv[i]);
 		if (NULL == d)
 			err(1, "%s", argv[i]);
-		while (NULL != (e = readdir(d))) {
+		while (k < filecnt && NULL != (e = readdir(d))) {
 			char path[512];
 			if (*e->d_name == '.')
 				continue;
 			snprintf(path, sizeof(path), "%s/%s", argv[i], e->d_name);
-			*(paths+(filecnt++)) = strdup(path);
+			*(paths+(k++)) = strdup(path);
 		}
 		closedir(d);
+		if (k < filecnt)
+			filecnt = k;
 		qsort(paths, filecnt, sizeof(char *), qsort_strcmp);
 		for (k = 0; k < filecnt; k++) {
 			join(*(paths+k));
