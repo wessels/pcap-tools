@@ -83,7 +83,8 @@ parse_timestamp(const char *s)
 {
     regmatch_t pmatch[10];
     struct tm tm;
-    for (unsigned int k = 0; time_patterns[k].pat; k++) {
+    unsigned int k;
+    for (k = 0; time_patterns[k].pat; k++) {
 	if (0 == time_patterns[k].re) {
 	    time_patterns[k].re = calloc(1, sizeof(*time_patterns[k].re));
 	    if (0 != regcomp(time_patterns[k].re, time_patterns[k].pat, REG_EXTENDED)) {
@@ -234,6 +235,7 @@ main(int argc, char *argv[])
 	qsort(infiles->files, infiles->cnt, sizeof(char *), qsort_strptime);
 	while (j < infiles->cnt) {
 	    char *buf = 0;
+	    unsigned int i;
 	    bufsize = strlen(mergecap_cmd);
 	    while (k < infiles->cnt && parse_timestamp(infiles->files[j]) == parse_timestamp(infiles->files[k])) {
 		bufsize += 1 + strlen(infiles->files[k]);
@@ -242,7 +244,7 @@ main(int argc, char *argv[])
 	    bufsize += 1;	/* terminating null */
 	    buf = calloc(bufsize, sizeof(char *));
 	    strcat(buf, mergecap_cmd);
-	    for (unsigned int i = j; i < k; i++) {
+	    for (i = j; i < k; i++) {
 		strcat(buf, " ");
 		strcat(buf, infiles->files[i]);
 	    }
@@ -252,13 +254,13 @@ main(int argc, char *argv[])
 	    free(buf);
 	    buf = 0;
 	}
-	for (unsigned int i = 0; i < infiles->cnt; i++)
+	for (i = 0; i < infiles->cnt; i++)
 	    free(infiles->files[i]);
 	free(infiles);
 	infiles = new;
     }
 
-    for (unsigned int i = 0; i < infiles->cnt; i++) {
+    for (i = 0; i < infiles->cnt; i++) {
 	join(infiles->files[i]);
 	free(infiles->files[i]);
     }
