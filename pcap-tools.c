@@ -21,18 +21,19 @@ my_pcap_open_offline(const char *pcapfile)
     assert(pcapfile);
     if (pcapfile[0] == '|') {
 	char **args = 0;
+	const char *s;
 	unsigned int nargs = 0;
 	unsigned int i = 0;
 	/* count arguments */
 	nargs++;		/* first arg */
-	for (const char *s = pcapfile; *s; s++) {
+	for (s = pcapfile; *s; s++) {
 	    if (*s == ' ')
 		nargs++;
 	}
 	nargs++;		/* terminating null */
 	args = calloc(nargs, sizeof(char *));
 	args[0] = strtok((char *) pcapfile + 1, " ");
-	for (unsigned int i = 1; i < nargs - 1; i++) {
+	for (i = 1; i < nargs - 1; i++) {
 	    args[i] = strtok(NULL, " ");
 	    assert(args[i]);
 	}
