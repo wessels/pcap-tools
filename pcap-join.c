@@ -167,10 +167,12 @@ main(int argc, char *argv[])
 	progname = strdup(1 + strrchr(argv[0], '/'));
     else
 	progname = strdup(argv[0]);
-    while ((i = getopt(argc, argv, "b:hmv")) != -1) {
+    while ((i = getopt(argc, argv, "b:c:hmv")) != -1) {
 	switch (i) {
 	case 'b':
 	    filterstr = strdup(optarg);
+	    break;
+	case 'c':	/* used as comment, eg in ps output */
 	    break;
 	case '?':
 	case 'h':
