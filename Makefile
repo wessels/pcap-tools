@@ -12,6 +12,7 @@ pcap-split \
 pcap-sample \
 pcap-change-dst \
 pcap-change-ip \
+pcap-change-port \
 pcap-decapsulate-gre \
 pcap-find-misordered \
 pcap-reorder \
@@ -75,6 +76,9 @@ pcap-change-dst: pcap-change-dst.o ${OBJS}
 	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-change-ip: pcap-change-ip.o ${OBJS}
+	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
+
+pcap-change-port: pcap-change-port.o ${OBJS}
 	${CC} -o $@ ${@}.o ${OBJS} ${LIBPCAP} ${LIBPCAPLAYERS}
 
 pcap-decapsulate-gre: pcap-decapsulate-gre.o ${OBJS}

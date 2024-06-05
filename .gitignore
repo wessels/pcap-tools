@@ -23,3 +23,8 @@ pcap-subtract-timestamp
 pcap-to-dlt-en10mb
 pcap-to-dlt-loop
 pcap-to-dlt-raw
+pcap-bad-udp-checksum
+pcap-change-port
+pcap-dns-find-edns-opt
+pcap-print-time-qname-qtype-rcode
+pcap-sample
